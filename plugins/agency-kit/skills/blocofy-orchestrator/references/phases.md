@@ -7,6 +7,11 @@ one-paragraph report to the human.
 ## Phase 0 — Bootstrap
 
 - `cd` tenant workspace; run platform `scripts/doctor.sh` (env, CLI, API).
+  It names the site the API key belongs to: read that name back to the human
+  and get a yes that it is the right site before anything is written. If the
+  doctor fails, or the Blocofy MCP tools are not available, stop: show the
+  output and point the human at the kit README, "Connect a site". Do not
+  work around a missing credential.
 - MCP: `read_site_dna` (brand truth), `site_status` (instances, page split).
 - Check prerequisite skills are installed (gsap-skills). Missing → tell the
   human the install line. Phases 1 and 2 have no skill prerequisite.

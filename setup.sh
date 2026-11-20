@@ -1,63 +1,64 @@
 #!/usr/bin/env bash
-# One-command workstation bootstrap for the Blocofy Agency Kit.
-#   curl -fsSL https://raw.githubusercontent.com/Blocofy/blocofy-agency-kit/main/setup.sh | bash
-# Idempotent — safe to re-run.
+# Checks the prerequisites for the Blocofy Agency Kit and installs its two
+# Claude Code plugins. It installs nothing else and edits no shell or system
+# file: for everything that is missing it prints where to get it.
+# Safe to re-run. Needs bash (macOS, Linux, Git Bash on Windows).
 set -uo pipefail
 
-say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+say()  { printf '\n%s\n' "$*"; }
+ok()   { printf '  ok       %s\n' "$*"; }
+miss() { printf '  MISSING  %s\n' "$*"; missing=$((missing + 1)); }
 have() { command -v "$1" >/dev/null 2>&1; }
+missing=0
+failed=0
 
-# If this script sits inside a kit copy (USB / shared folder / clone from any
-# git host), install from that local path — no GitHub needed.
+# A copy of the kit next to this script installs from that folder; otherwise
+# the public GitHub repository is used.
 KIT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOCAL_MODE=0
-[ -f "$KIT_DIR/.claude-plugin/marketplace.json" ] && LOCAL_MODE=1
+if [ -f "$KIT_DIR/.claude-plugin/marketplace.json" ]; then SOURCE="$KIT_DIR"; else SOURCE="Blocofy/blocofy-agency-kit"; fi
 
-say "1/5 · Source"
-if [ "$LOCAL_MODE" = 1 ]; then
-  echo "✓ local kit copy detected: $KIT_DIR (GitHub not required)"
+say "1/3  Claude Code plugins (source: $SOURCE)"
+if ! have claude; then
+  miss "claude CLI: install Claude Code first, https://claude.com/claude-code"
+  failed=1
 else
-  echo "✓ no local kit copy next to this script: using the GitHub marketplace"
+  plugin_step() { # label, command...
+    local label="$1"; shift
+    local out
+    if out="$("$@" 2>&1)"; then ok "$label"
+    elif printf '%s' "$out" | grep -qiE 'already (added|installed|on disk|at the latest)'; then ok "$label (already there)"
+    else printf '  FAILED   %s\n%s\n' "$label" "$(printf '%s' "$out" | tail -3 | sed 's/^/           /')"; failed=1
+    fi
+  }
+  plugin_step "marketplace blocofy"        claude plugin marketplace add "$SOURCE"
+  plugin_step "plugin agency-kit@blocofy"  claude plugin install agency-kit@blocofy
+  plugin_step "marketplace gsap-skills"    claude plugin marketplace add greensock/gsap-skills
+  plugin_step "plugin gsap-skills"         claude plugin install gsap-skills@gsap-skills
 fi
 
-say "2/5 · Claude Code plugins"
-if ! have claude; then echo "✗ claude CLI not found — install Claude Code first"; exit 1; fi
-if [ "$LOCAL_MODE" = 1 ]; then
-  claude plugin marketplace add "$KIT_DIR" 2>/dev/null || echo "  (marketplace already added)"
+say "2/3  Tools the skills call"
+if have node; then
+  major="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+  if [ "$major" -ge 18 ]; then ok "node $(node --version)"; else miss "node 18 or newer (found $(node --version)): https://nodejs.org"; fi
 else
-  claude plugin marketplace add Blocofy/blocofy-agency-kit 2>/dev/null || echo "  (marketplace already added)"
+  miss "node 18 or newer: https://nodejs.org"
 fi
-claude plugin install agency-kit@blocofy 2>/dev/null || claude plugin update agency-kit@blocofy
-claude plugin marketplace add greensock/gsap-skills 2>/dev/null || echo "  (gsap marketplace already added)"
-claude plugin install gsap-skills@gsap-skills 2>/dev/null || echo "  (gsap-skills already installed)"
-echo "✓ plugins ready"
-# Optional companion — not installed automatically: its skill triggers on every
-# frontend task in every project, so each workstation opts in.
-echo "  optional: modern-web-guidance (native dialog/popover/form guides + QA legacy sweep):"
-echo "    claude plugin marketplace add GoogleChrome/modern-web-guidance && claude plugin install modern-web-guidance@googlechrome"
+have curl && ok "curl" || miss "curl: your OS package manager"
+have jq   && ok "jq"   || miss "jq: your OS package manager (brew install jq, apt install jq, winget install jqlang.jq)"
+if have blocofy; then ok "blocofy CLI $(blocofy --version 2>/dev/null | head -1)"; else miss "Blocofy CLI: npm i -g @blocofy/cli"; fi
 
-say "3/5 · direnv"
-if ! have direnv; then
-  if have brew; then brew install direnv; else echo "✗ install direnv manually (no brew)"; fi
-fi
-SHELL_RC="$HOME/.zshrc"
-if ! grep -q 'direnv hook' "$SHELL_RC" 2>/dev/null; then
-  printf '\neval "$(direnv hook zsh)"\n' >> "$SHELL_RC"
-  echo "✓ direnv hook added to $SHELL_RC (open a new terminal or: source $SHELL_RC)"
-else
-  echo "✓ direnv hook present"
-fi
+say "3/3  Per client site (not done by this script)"
+cat <<'TXT'
+  In the site's own folder:
+    1. .env.local with BLOCOFY_URL, BLOCOFY_API_TOKEN, BLOCOFY_CLI_TOKEN, BLOCOFY_TOKEN
+       (keys: Blocofy panel, Ayarlar -> Bağlantılar ve anahtarlar); keep it out of git
+    2. .mcp.json pointing at https://app.blocofy.com/api/v1/mcp with
+       "Authorization": "Bearer ${BLOCOFY_API_TOKEN}"
+    3. npm i playwright && npx playwright install chromium
+  Full steps: README.md, "Connect a site".
+  Optional: modern-web-guidance plugin (Node 22+), an image-generation connector.
+TXT
 
-say "4/5 · blocofy CLI"
-have blocofy && echo "✓ blocofy CLI: $(blocofy --version 2>/dev/null | head -1)" \
-  || echo "⚠ blocofy CLI not found — install it from the platform before theme work"
-
-say "5/5 · Next steps (per tenant)"
-cat <<'EOF'
-  mkdir -p tenants/<domain> && cd tenants/<domain>
-  # .env.local  → BLOCOFY_URL / BLOCOFY_CLI_TOKEN / BLOCOFY_API_TOKEN
-  # .envrc      → dotenv .env.local   (then: direnv allow)
-  # .mcp.json   → "Authorization": "Bearer ${BLOCOFY_API_TOKEN}"
-  # then open claude in that folder and say: "yeni site kur"
-EOF
-echo "DONE"
+if [ "$failed" -ne 0 ]; then say "RESULT: a plugin step failed, see FAILED above."; exit 1; fi
+if [ "$missing" -ne 0 ]; then say "RESULT: plugins installed; $missing prerequisite(s) missing, see MISSING above."; exit 2; fi
+say "RESULT: ready."

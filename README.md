@@ -1,30 +1,41 @@
 # Blocofy Agency Kit
 
-Reusable Claude Code skill suite for building creative corporate websites on
-**Blocofy CMS** from scratch. One plugin (`agency-kit`), six skills, one
-orchestrator. Contains **no client or personal data** — every tenant-specific
-value is read at runtime from the tenant workspace.
+Claude Code skills for building a client website on **Blocofy CMS** from brief
+to launch. One plugin (`agency-kit`), six skills, one orchestrator. It holds no
+client or personal data: every site-specific value is read at runtime from
+your own workspace.
 
-## Install
+## What you need first
+
+| Need | Why | Where |
+|---|---|---|
+| Claude Code | runs the skills | https://claude.com/claude-code |
+| A Blocofy site, and its owner's help | the kit builds on it; only the site owner can create the keys below | https://blocofy.com |
+| Node 18 or newer | Blocofy CLI and the QA scripts | https://nodejs.org |
+| `curl`, `jq`, `bash` | the helper scripts | preinstalled or from your package manager (`brew`, `apt`, `winget`). On Windows use Git Bash or WSL: the commands in this file are bash |
+| Playwright with a browser | page checks and reference recon | `npm i playwright && npx playwright install chromium` in the workspace |
+| `gsap-skills` plugin | motion guidance the theme skill calls by name | installed in the next section |
+| An image-generation connector (optional, paid) | only if you want generated images or video; the media skill is written for the Freepik/Magnific connector | your Claude connectors |
+| `modern-web-guidance` plugin (optional) | the QA legacy-pattern sweep | `claude plugin marketplace add GoogleChrome/modern-web-guidance && claude plugin install modern-web-guidance@googlechrome` (Node 22+) |
+
+Nothing else is required. The concept phase and the reference-site recon run
+on the kit alone.
+
+## Install the plugin
 
 ```bash
 claude plugin marketplace add Blocofy/blocofy-agency-kit
 claude plugin install agency-kit@blocofy
+claude plugin marketplace add greensock/gsap-skills
+claude plugin install gsap-skills@gsap-skills
 ```
 
-Update later with: `claude plugin update agency-kit@blocofy`
+These install for your user account (Claude Code's own configuration), so
+the skills are available in every folder. Update later with `claude plugin update agency-kit@blocofy`, then restart
+Claude Code.
 
-### Even easier options
-
-**One-command bootstrap** (installs plugins + gsap-skills + direnv hook):
-
-```bash
-git clone https://github.com/Blocofy/blocofy-agency-kit && bash blocofy-agency-kit/setup.sh
-```
-
-**Zero-command for teammates** — commit this `.claude/settings.json` into any
-shared workspace repo; whoever opens it in Claude Code gets prompted to
-install the marketplace + plugin automatically:
+A team can have Claude Code offer the plugin to everyone who opens a shared
+workspace by committing this to the workspace's `.claude/settings.json`:
 
 ```json
 {
@@ -37,54 +48,103 @@ install the marketplace + plugin automatically:
 }
 ```
 
-**Let Claude do it** — on a fresh machine, open Claude
-Code anywhere and say: *"Blocofy/blocofy-agency-kit reposunu kur ve README'deki
-kurulumu tamamla"*. The agent runs the same steps.
+Or let the script do the same four commands and check the tools in the table:
 
-### No GitHub? Fully offline options
+```bash
+git clone https://github.com/Blocofy/blocofy-agency-kit && bash blocofy-agency-kit/setup.sh
+```
 
-The plugin system installs from a **local directory** just as well:
+It installs the two plugins and nothing else: no packages, no edits to shell
+or system files. It prints what is missing and where to get it, and ends with
+`RESULT: ready.` or a list of what is still missing.
 
-1. **Copy the folder** (USB, AirDrop, network share, zip) to the machine, then:
+To install from a copy of this folder instead of GitHub:
+`claude plugin marketplace add /path/to/blocofy-agency-kit`.
+
+## Connect a site
+
+Do this once per client site. Make an empty folder for the site (any name,
+anywhere) and do every step below inside it; this folder is what the kit
+calls the site's workspace. Blocofy's own guide
+is in the panel under **Başlarken** (Getting started) and at
+https://docs.blocofy.com (in Turkish).
+
+1. **Install the Blocofy CLI.**
 
    ```bash
-   bash /path/to/blocofy-agency-kit/setup.sh     # auto-detects local mode
-   # or manually:
-   claude plugin marketplace add /path/to/blocofy-agency-kit
-   claude plugin install agency-kit@blocofy
+   npm i -g @blocofy/cli
    ```
 
-2. **Any git host works** — GitLab, Bitbucket, self-hosted Gitea, or a bare
-   repo on a NAS: `git clone <any-remote> && bash blocofy-agency-kit/setup.sh`.
+2. **Create two credentials in the Blocofy panel**, under
+   *Ayarlar → Bağlantılar ve anahtarlar* (Settings → Connections and keys).
+   Only the site owner sees this screen.
+   - *Yeni API anahtarı* (new API key). Keep the default profile, *Tema
+     geliştirme* (Theme development): it reads the site and works on drafts and
+     cannot publish. The key is shown once.
+   - *Yeni CLI token'ı* (new CLI token).
 
-3. **Zero-command settings for a shared folder** — the `directory` source:
+3. **Put them in a file named `.env.local`** in the site folder. If the folder
+   is a git repository, add `.env.local` to its `.gitignore` before the first
+   commit. Quote a value that contains spaces or symbols.
+
+   ```bash
+   BLOCOFY_URL=https://your-site.example      # the site's address
+   BLOCOFY_API_TOKEN=...                      # the API key
+   BLOCOFY_CLI_TOKEN=...                      # the CLI token
+   BLOCOFY_TOKEN=...                          # the CLI token again: the CLI itself reads this name
+   ```
+
+   With these in place the CLI needs no separate login. Load the file into
+   your terminal, then start Claude Code **from that same terminal**:
+
+   ```bash
+   set -a; . ./.env.local; set +a
+   claude
+   ```
+
+   Claude Code started from an app icon or an editor does not see these
+   variables and the connection in step 4 will fail to authenticate. If that
+   happens, start it from the terminal; do not paste the key into `.mcp.json`.
+
+4. **Add the Blocofy connection for Claude Code** as `.mcp.json` in the site
+   folder. The key is read from the environment and is never written into the
+   file:
 
    ```json
    {
-     "extraKnownMarketplaces": {
+     "mcpServers": {
        "blocofy": {
-         "source": { "source": "directory", "path": "/path/to/shared/blocofy-agency-kit" }
+         "type": "http",
+         "url": "https://app.blocofy.com/api/v1/mcp",
+         "headers": { "Authorization": "Bearer ${BLOCOFY_API_TOKEN}" }
        }
-     },
-     "enabledPlugins": { "agency-kit@blocofy": true }
+     }
    }
    ```
 
-   The path must exist on each machine — agree on a fixed location
-   (e.g. a mounted share or `~/Blocofy/blocofy-agency-kit`).
+   The first time, Claude Code asks you to approve this project's `.mcp.json`.
+   Inside Claude Code, `/mcp` should then list `blocofy` as connected.
 
-Updates without GitHub: replace the folder with the new copy (or `git pull`
-from your host), then `claude plugin update agency-kit@blocofy`.
+5. **Check the key.** A working key answers with `"ok": true` and the name and
+   address of the site it belongs to; confirm it is the site you mean.
 
-### Prerequisites (installed separately, invoked by name — never copied)
+   ```bash
+   curl -s https://app.blocofy.com/api/v1/ping -H "Authorization: Bearer $BLOCOFY_API_TOKEN"
+   ```
 
-| Dependency | Purpose | Install |
-|---|---|---|
-| `gsap-skills` plugin | Correct GSAP/ScrollTrigger usage | `claude plugin marketplace add greensock/gsap-skills && claude plugin install gsap-skills@gsap-skills` |
-| `modern-web-guidance` skill (optional) | Native dialog/popover/form patterns and the QA legacy-pattern sweep; never overrides the theme kit (GSAP/Lenis motion stays) | `claude plugin marketplace add GoogleChrome/modern-web-guidance && claude plugin install modern-web-guidance@googlechrome` (Node ≥ 22; `setup.sh` prints this, does not run it) |
-| `blocofy` CLI | theme dev / push / publish | provided by platform |
-| Freepik/Magnific MCP | AI image & video generation | claude.ai connector / MCP config |
-| Playwright (`npm i playwright`) | QA scripts | per workspace or shared |
+6. **Start.** Open Claude Code in the site folder and say what you want, for
+   example "start a new Blocofy site for this client". The kit checks the
+   connection first and tells you what is missing.
+
+What the agent can and cannot do with these credentials: it works on drafts
+and asks you before anything visitors can see changes. Going live with a theme
+is always your click in the Blocofy panel.
+
+## Language
+
+The skill texts are in English, except `site-build-method` and its client
+templates, which are in Turkish. The agent reads both and answers in the
+language you write in. Blocofy's documentation is in Turkish.
 
 ## Skills
 
@@ -97,19 +157,22 @@ from your host), then `claude plugin update agency-kit@blocofy`.
 | `blocofy-qa` | Playwright verification recipes and the `site_readiness` publish gate. |
 | `site-build-method` | Agency method above the phase machine (Turkish): prototype-first vs theme-direct decision, 13 gated phases from intake to handover, contract templates, roles, parity/quality gates, prelaunch checklist, change control, Blocofy adapter with retestable known issues, the mistakes each rule came from. |
 
-## Tenant workspace convention (assumed, never embedded)
+## Site folder layout
+
+The kit creates and expects these inside the site folder; you only make the
+first two files yourself.
 
 ```
-tenants/<domain>/
-├── .env.local          # gitignored: BLOCOFY_URL, BLOCOFY_CLI_TOKEN, BLOCOFY_API_TOKEN
+<site folder>/
+├── .env.local          # gitignored: BLOCOFY_URL, BLOCOFY_API_TOKEN, BLOCOFY_CLI_TOKEN, BLOCOFY_TOKEN
 ├── .mcp.json           # "Authorization": "Bearer ${BLOCOFY_API_TOKEN}" — never a literal token
 ├── .blocofy-build/     # STATE.md, design-dna.json, content-model.json, NOTES.md
-│   └── session/        # gitignored: preview-token cache (short-lived)
+│   └── session/        # short-lived preview links; add .blocofy-build/session/ to .gitignore
 ├── theme/              # blocofy CLI push source
 └── content/            # page documents, media briefs
 ```
 
-## Rules of the house
+## For contributors
 
 - Skills never contain a literal site URL, token, brand name or client fact.
 - Secrets live in `.env.local`; brand/voice lives in the server-side Site DNA;

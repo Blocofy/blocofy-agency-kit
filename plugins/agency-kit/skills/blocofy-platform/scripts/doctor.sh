@@ -24,11 +24,16 @@ else
 fi
 
 if [ -n "${BLOCOFY_API_TOKEN:-}" ]; then
-  code=$(curl -s -o /tmp/blocofy-doctor.json -w "%{http_code}" -m 15 \
-    "https://app.blocofy.com/api/v1/pages?limit=1" \
-    -H "Authorization: Bearer $BLOCOFY_API_TOKEN")
+  body=$(curl -s -m 15 -w '\n%{http_code}' "https://app.blocofy.com/api/v1/ping" \
+    -H "Authorization: Bearer $BLOCOFY_API_TOKEN") || body=$'\n000'
+  code=${body##*$'\n'}; json=${body%$'\n'*}
   if [ "$code" = "200" ]; then
-    say "✓ Admin API reachable (pages endpoint 200)"
+    if command -v jq >/dev/null; then
+      say "✓ API key belongs to: $(printf '%s' "$json" | jq -r '"\(.site.name // "?") (\(.site.domain // .site.slug // "?")), profile: \(.profile.label // "unprofiled")"')"
+      say "  Confirm this is the site you mean (BLOCOFY_URL=${BLOCOFY_URL:-unset})."
+    else
+      say "✓ Admin API reachable (ping 200); install jq to see which site the key belongs to"
+    fi
   else
     say "✗ Admin API check failed (HTTP $code)"; fail=1
   fi
