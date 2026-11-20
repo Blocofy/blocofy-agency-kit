@@ -19,4 +19,4 @@
    collection entries. Never leave a generation-service URL in shipped content.
 9. **Register** every asset in `.blocofy-build/media-registry.json`
    (`asset-system.md`) so a later session can regenerate or extend the set
-   coherently, and append the round's credits to `STATE.md`.
+   coherently, and append the round's credits to `.blocofy-build/credits.md`.

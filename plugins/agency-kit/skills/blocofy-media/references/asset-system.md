@@ -30,7 +30,9 @@ Without it, each session re-invents the look and the set drifts.
 8. **Post-process** per `post_process` (white balance, alpha, crop, format).
 9. **Register** in `.blocofy-build/media-registry.json`, then wire into the
    site.
-10. **Ledger.** Append credits spent this round to `STATE.md`.
+10. **Ledger.** Append credits spent this round to `.blocofy-build/credits.md`
+    (date, family, items, model, credits). The round started with the spend
+    gate in `SKILL.md`; a board is a round.
 
 ## Series rule
 

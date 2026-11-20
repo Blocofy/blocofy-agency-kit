@@ -55,6 +55,8 @@ Full procedure, tables and gate: `concept-process.md`. In short:
 - **Independent review** by a subagent that did not work on the concept.
 - Sync a human-readable summary into the server Site DNA (platform channel
   matrix: `update_site_dna` or REST PATCH) so the concept survives machines.
+  If the server record is not empty, show the human what would be replaced
+  and wait for a yes (`blocofy-platform` `references/live-writes.md`).
 - Gate: `concept-process.md` → Gate.
 
 **Revision:** when the client changes direction later (any phase), reopen
@@ -68,7 +70,10 @@ should be "like" an approved one follows `concept-process.md` → New area.
   static settings, a collection (with `field_schema`), a form, or globals.
 - Design collections editor-first (labels, field types, content_page routes).
 - Write `content-model.json`; create/patch collections via platform recipes
-  (full-schema replace rule!). Gate: no section left with "TBD" data source.
+  (full-schema replace rule!). A new collection is safe to create. Changing
+  an existing collection's schema, a menu the live theme uses, a form or a
+  site setting is a write with no preview: use the stop in `blocofy-platform`
+  `references/live-writes.md`. Gate: no section left with "TBD" data source.
 
 ## Phase 4 — Theme build
 

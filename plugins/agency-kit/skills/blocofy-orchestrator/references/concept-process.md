@@ -46,7 +46,8 @@ Each direction shows the same five things so they can be compared:
    an uppercase sample (a display face can fail on dotted/dotless capitals).
 3. The signature element, drawn, not described.
 4. The first screen at 1440×900 and 390×844 with real copy at real size.
-5. One sample asset per direction, made with the cheapest model.
+5. One sample asset per direction, made with the cheapest model, after the
+   spend gate in `blocofy-media`.
 
 Directions differ in idea, not in colour. Three palettes on one layout is one
 direction.

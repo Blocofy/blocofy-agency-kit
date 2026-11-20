@@ -18,11 +18,24 @@ anything that could ship; never leave generation-service URLs in documents.
    (`references/asset-system.md`); do not improvise a look.
    A series is constraints, not a template: never produce the next asset by
    varying, mirroring or recropping an approved one.
-2. **Check credits before batch generation** (`account_balance`); tell the user
-   when unlimited mode is inactive. Batch related generations in parallel.
-3. **Self-host everything**: download the result, upload to Blocofy media
+2. **Spend gate, before the first generation of every round.** Send the
+   human: the balance (`account_balance`, and whether unlimited mode is
+   active), the list of what you will generate (count, model, resolution),
+   and the estimated cost (`simulate_cost` where the tool offers it). Wait
+   for a yes. The yes covers that list. Cheap trials and final-resolution
+   frames are separate lines on it; one yes can cover both when both are
+   listed with their cost.
+   Anything beyond the list, or a retry that would pass the approved total,
+   goes back through the gate. After the round, append what was spent to
+   `.blocofy-build/credits.md`. Batch the approved generations in parallel.
+3. **Client material leaves the workspace only on a yes.** Before the first
+   upload of client-supplied files, or of screenshots of the client's site,
+   to a generation service, tell the human which files go to which service
+   and wait for a yes. Record the answer in `.blocofy-build/NOTES.md`; it
+   holds for that kind of material for the rest of the project.
+4. **Self-host everything**: download the result, upload to Blocofy media
    (platform `references/media.md` — MIME flag mandatory), use the tenant CDN URL.
-4. **Truthfulness**: portfolio/case imagery may be stylized, but never invent
+5. **Truthfulness**: portfolio/case imagery may be stylized, but never invent
    metrics, awards or client attributions inside images or captions.
 
 ## Model matrix (verified 2026-07; re-check `*_models_list` quarterly)
@@ -50,7 +63,8 @@ escalating.
 ## Reference-guided flow (client site/product shots as refs)
 
 1. Capture references yourself (Playwright screenshot of the client's site,
-   crop consent banners) or receive client assets.
+   crop consent banners) or receive client assets. Ground rule 3 applies
+   before step 2.
 2. `creations_request_upload` → HTTP `PUT` the bytes (set `Content-Type`;
    never re-PUT the same URL) → `creations_finalize_upload` → use returned
    identifiers in `references: [{type:"image", identifier}]`.

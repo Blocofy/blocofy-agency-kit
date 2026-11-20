@@ -83,8 +83,14 @@ contract artifact) → verify exit gate → update STATE.md → report.
   is never a blocker and is never asked for.
 - One writer per artifact: STATE.md → orchestrator only; each artifact → its
   producing phase only. Later phases read, never edit.
-- Anything touching the LIVE instance or spending significant credits →
-  surface to the human first.
+- Three stops need a yes from the human in the conversation, each time:
+  1. Going live with a theme: the approval flow (`blocofy-platform`).
+  2. Any write that has no preview (published entries, collection schemas,
+     menus, site settings, forms, live-page SEO and publish state, deletes):
+     `blocofy-platform` `references/live-writes.md`.
+  3. Any spend on generation, and any upload of the client's material to a
+     generation service: the spend gate in `blocofy-media`.
+  A general go-ahead given earlier does not replace these.
 - A visitor-facing experience (a section, a flow, a form, a new area) is
   shown as scenario + visual draft and picked by the client before it is
   coded. Approval of a written plan is not approval of how it looks.

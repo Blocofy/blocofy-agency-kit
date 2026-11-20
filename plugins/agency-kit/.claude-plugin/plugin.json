@@ -1,6 +1,6 @@
 {
   "name": "agency-kit",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Build creative corporate websites on Blocofy CMS end-to-end: orchestrator phase machine, platform operation recipes, theme-writing conventions, AI media pipeline and QA gates. Reusable across client sites; contains no client data.",
   "author": {
     "name": "Blocofy"

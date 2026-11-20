@@ -36,6 +36,6 @@ Kapı: "iki elle yazılmış kaynak yok" ya da "her birleşen değişiklikte eş
 - Faz 2'de kredi/para üst sınırı belirlenir.
 - Her üretimden önce bakiye; hesabın sınırsız modu o oturumda geçerli değilse kullanıcıya söylenir.
 - Model listesi her projede o gün doğrulanır; kit matrisleri tarihlidir.
-- Varyant sayısı üst sınırlı (ör. istem başına 2). Bütçenin %20'sini aşan tek batch insan onayı ister.
+- Varyant sayısı üst sınırlı (ör. istem başına 2). Her üretim turu `blocofy-media` harcama kapısından geçer: liste, tahmini maliyet, insan onayı. Onaylı listenin ya da toplamın dışına çıkan her şey yeniden onay ister.
 - `media-manifest.json`'a model, kredi, deneme sayısı ve kaynak yazılır; başarısız ve reddedilen üretimler de sayılır.
 - Uzun video istemleri moderasyona takılabilir: kısa klipler + kare kilitli birleştirme, kurgu yerelde (ffmpeg) yapılır.

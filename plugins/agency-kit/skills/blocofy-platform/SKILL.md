@@ -22,6 +22,15 @@ appearance, sections), small fixes included.
 | User, after seeing the preview, says to put it live | `request_publish_approval` (or `blocofy theme work request-approval <wk_…> --open --wait`) and give them the approval link; one click puts the work live. Never use the direct-live tools for this. |
 | `publish_theme`, `deploy_theme`, `apply_release`, live `update_appearance`, `update_theme_settings` with `allow_live`, `blocofy theme push --live`, `blocofy theme publish` | Never on your own initiative, even if the credential allows it. They belong to a person in the panel or an owner-named CI key. |
 
+## Writes outside a theme work: the agent is the stop
+
+Collection entries, collection schemas, menus, site settings, forms, the SEO
+fields and publish state of pages in the live theme, and every delete take
+effect when the request returns. The platform shows no preview and asks no
+one. Before any of them: tell the human what changes, where it shows, that it
+is live on save, and how it is undone; then wait for a yes that names that
+write. Table and wording: `references/live-writes.md`.
+
 ## 0. Environment contract (read this first, every session)
 
 All tenant values come from the workspace — never hardcode them:
@@ -51,10 +60,10 @@ Pick per operation; verify dates show when a row was last confirmed.
 | Theme files push/pull/dev | CLI | draft-safe by default; `--instance <handle>` targets a specific draft; write into a theme work with `--draft --work <wk_…>` (see the table above); going live is the approval flow, not `theme publish`. `theme rename <handle> <name>` renames | 2026-11 |
 | Draft preview link | REST / MCP | `POST /themes/<theme handle>/preview-links {"page": "<page handle>"}` (MCP `create_preview_link`: `instance`, `page`, `ttl_seconds`); CLI signed preview is retired → §3 | 2026-10-31 |
 | Page **document** create/update | **REST only** | MCP `document` param is schema-less → client stringifies → server rejects. PATCH `{"document": …}` **alone**; bundling other fields can silently skip the draft revision | 2026-07 |
-| Page publish / delete(trash) | REST | `POST /pages/{id}/publish`; body optional (`published_at`, `unpublish_at`) | 2026-07 |
+| Page publish / delete(trash) | REST | `POST /pages/{id}/publish`; body optional (`published_at`, `unpublish_at`). In the live theme this is a live write → `references/live-writes.md` | 2026-07 |
 | Chrome (header/footer) add/update/delete | REST | `POST /themes/{id}/chrome` with `position: 0` prepends; MCP appends at the end. `PATCH`/`DELETE …/chrome/{group}/{sectionId}` per docs (2026-09-23), not yet exercised. POST failed for a blockless section (422 no `blocks`, 500 `blocks: []`, REST+MCP) → `partial/header|footer` fallback, see theme-kit chrome pattern | 2026-10-31 |
 | Media upload | REST | `curl -F "file=@f;type=video/mp4"` — **explicit MIME required**, curl defaults to octet-stream and the server rejects it. SVG upload gated per site, never for logo/favicon/og → PNG; never retry `POST /media` after 502; CDN first resize can 502 once → `references/media.md` | 2026-10-31 |
-| Collections / entries CRUD | REST (MCP read ok) | `update_collection` field_schema and entry `data` are **replace-on-save**: always GET, merge, send the FULL object. Media-library URLs in `data` come back as media ids → `references/binding.md` | 2026-10-31 |
+| Collections / entries CRUD | REST (MCP read ok) | `update_collection` field_schema and entry `data` are **replace-on-save**: always GET, merge, send the FULL object. Media-library URLs in `data` come back as media ids → `references/binding.md`. Published entries and schema changes are live on save → `references/live-writes.md` | 2026-10-31 |
 | Theme asset write (fallback) | REST | `PUT /themes/{id}/assets {path,kind,content}` when CLI is unavailable | 2026-07 |
 
 Transport trap: python `urllib` hits Cloudflare 1010 on `app.blocofy.com` —
@@ -109,9 +118,10 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
 | `references/pages-documents.md` | PageDocument v2 shape, document-PATCH-alone rule, publish/trash lifecycle |
 | `references/themes-instances.md` | draft/live model, instance-page binding, chrome endpoints, publish flow |
 | `references/media.md` | upload recipe, MIME table, CDN URL pattern, first-resize 502 retry + cache warm |
+| `references/live-writes.md` | writes with no preview: what they are, the four-line stop, what needs no stop |
 | `references/binding.md` | `{"$bind": "entry.data.x"}`, `entries[key]` in Liquid, relation `where` filter, bindable schema types |
 
 ## 5. Scripts
 
 - `scripts/doctor.sh` — validates env vars, CLI presence and API reachability; run as Phase 0 gate.
-- `scripts/api.sh` — thin curl wrapper: `api.sh GET /pages?limit=5`, `api.sh PATCH /pages/<id> @doc.json`.
+- `scripts/api.sh` — thin curl wrapper: `api.sh GET "/pages?limit=5"`, `api.sh PATCH "/pages/<id>" @doc.json`. It refuses DELETE, page publish, site-settings and menu writes unless `LIVE_WRITE_OK=1` is set for that one call; set it only after the human's yes (`references/live-writes.md`).
