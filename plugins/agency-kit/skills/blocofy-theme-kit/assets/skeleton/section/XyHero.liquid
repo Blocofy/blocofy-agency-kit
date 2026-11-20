@@ -1,0 +1,27 @@
+<section class="xy-hero">
+  <div class="xy-wrap">
+    <h1 class="xy-hero__title" data-reveal>{{ props.title }}</h1>
+    {%- if props.lead and props.lead != blank -%}
+    <p class="xy-hero__lead" data-reveal>{{ props.lead }}</p>
+    {%- endif -%}
+    {%- if props.cta_label and props.cta_label != blank -%}
+    <a class="xy-btn" href="{{ props.cta_url | default: '/' }}">{{ props.cta_label }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "category": "Hero",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "translatable": true },
+    { "type": "textarea", "id": "lead", "label": "Lead", "rows": 2, "translatable": true },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "translatable": true },
+    { "type": "text", "id": "cta_url", "label": "CTA link" }
+  ],
+  "presets": [
+    { "name": "Hero", "settings": { "title": "Placeholder headline", "lead": "Placeholder supporting line." } }
+  ]
+}
+{% endschema %}

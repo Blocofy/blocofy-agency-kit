@@ -1,0 +1,13 @@
+{
+  "name": "blocofy",
+  "owner": {
+    "name": "Blocofy"
+  },
+  "plugins": [
+    {
+      "name": "agency-kit",
+      "source": "./plugins/agency-kit",
+      "description": "Orchestrated skill suite for building creative corporate websites on Blocofy CMS from scratch: platform operations, theme conventions, AI media discipline, QA gates and a phase-machine orchestrator."
+    }
+  ]
+}

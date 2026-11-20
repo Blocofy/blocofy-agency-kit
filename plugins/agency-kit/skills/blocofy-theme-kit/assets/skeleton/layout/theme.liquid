@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{ locale | default: 'tr-TR' | split: '-' | first }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.seo_title | default: page.title }}{% if globals.site_name %} · {{ globals.site_name }}{% endif %}</title>
+  {% if page.seo_description %}<meta name="description" content="{{ page.seo_description }}">{% endif %}
+  {% if page.canonical %}<link rel="canonical" href="{{ page.canonical }}">{% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ page.seo_title | default: page.title }}">
+  {% if page.seo_description %}<meta property="og:description" content="{{ page.seo_description }}">{% endif %}
+  {%- assign og_image = page.og_image | default: globals.og_image -%}
+  {% if og_image and og_image != blank %}
+  <meta property="og:image" content="{{ og_image | image_url: 'width=1200&height=630&fit=cover&format=jpg' }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- FONTS: replace with the pairing chosen in the concept phase -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=REPLACE_DISPLAY&family=REPLACE_BODY&display=swap">
+  <!-- CDN: exact version + integrity + crossorigin on every tag (motion-adapter.md § CDN integrity) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.css" integrity="sha384-gvLq/iOMNnPchdosgVym5huSVkKipHCQaqSw2Eg0V52Mzmlf169ZOsXcNc2cNu8x" crossorigin="anonymous">
+  <style>
+:root{ {{ theme_css }} }
+{% render 'asset/theme.css' %}
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  {{ header_html }}
+  <main id="main">
+{{ content_html }}
+  </main>
+  {{ footer_html }}
+  <script>
+  (function () {
+    /* chrome dedupe guard — keep first, remove later copies (see chrome-pattern.md) */
+    ['.xy-topbar', '.xy-footer'].forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el, i) { if (i > 0) el.remove(); });
+    });
+  })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js" integrity="sha384-ClD7pCgIUz5M81HT8aZmMxCsWmfsycmBiwL5gy1pUbdWHvICIbea22N9sTtAFotA" crossorigin="anonymous"></script>
+  <script>
+{% render 'asset/app.js' %}
+  </script>
+</body>
+</html>
