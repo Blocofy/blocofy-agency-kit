@@ -1,6 +1,6 @@
 # Phase details
 
-Common frame per phase: read input artifacts fresh from disk → invoke the
+Common frame per phase: read input artifacts fresh from disk → load the
 named skill(s) → capture step → verify exit gate → update STATE.md →
 one-paragraph report to the human.
 
@@ -15,21 +15,29 @@ Phases 0 and 4–7 run as written.
 
 ## Phase 0 — Bootstrap
 
-- `cd` tenant workspace; run platform `scripts/doctor.sh` (env, CLI, API).
+- From the site folder run
+  `bash <skill-dir>/../blocofy-platform/scripts/doctor.sh` (env, CLI, API;
+  `<skill-dir>`: `SKILL.md`, Terms).
   It names the site the API key belongs to: read that name back to the human
   and get a yes that it is the right site before anything is written. If the
-  doctor fails, or the Blocofy MCP tools are not available, stop: show the
+  doctor fails, or the tools of the `blocofy` MCP server are not available, stop: show the
   output and point the human at the kit README, "Connect a site". Do not
   work around a missing credential.
-- MCP: `read_site_dna` (brand truth), `site_status` (instances, page split).
-- Check prerequisite skills are installed (gsap-skills). Missing → tell the
-  human the install line. Phases 1 and 2 have no skill prerequisite.
+- `blocofy` MCP server: `read_site_dna` (brand truth), `site_status`
+  (instances, page split).
+- Check that the five sibling kit skills are present (`SKILL.md`, Terms).
+- Check whether the GSAP skills are available. Missing → tell the person:
+  `npx skills add greensock/gsap-skills` (Claude Code:
+  `claude plugin install gsap-skills@gsap-skills`). Not a blocker: without
+  them, use GSAP's own documentation. Phases 1 and 2 have no skill
+  prerequisite.
 - Create `.blocofy-build/` (+ `session/` under gitignore) and STATE.md.
 - **Theme provenance gate** (SKILL.md): decide continue / takeover /
   greenfield from STATE.md + `blocofy status`; write `themeOrigin` into
   STATE.md. Greenfield explicitly means: skeleton copy, NOT a pull of the
   platform default.
-- Flag hygiene problems found on the way (e.g. literal token in `.mcp.json`).
+- Flag hygiene problems found on the way (e.g. a literal token in an agent MCP
+  config file).
 
 ## Phase 1 — Brief & discovery
 
@@ -49,7 +57,8 @@ sources (existing site to migrate? client assets?).
 
 Full procedure, tables and gate: `concept-process.md`. In short:
 
-- Dispatch specialist subagents (art direction always) with the brief. The
+- Give each specialist brief (art direction always) to a separate agent
+  (`SKILL.md`, Terms) together with `brief.md`. The
   art-direction specialist returns the design read and the three dials. Their
   output is input to the board, not the concept itself. No external design
   skill is required.
@@ -66,7 +75,9 @@ Full procedure, tables and gate: `concept-process.md`. In short:
   entries, section vocabulary sketch.
 - **Family boards** per asset family (`blocofy-media` `asset-system.md`);
   each client pick becomes that family's `style_ref`.
-- **Independent review** by a subagent that did not work on the concept.
+- **Independent review** by a separate agent that did not work on the
+  concept (`SKILL.md`, Terms). Record in STATE.md whether the review was
+  independent.
 - Sync a human-readable summary into the server Site DNA (platform channel
   matrix: `update_site_dna` or REST PATCH) so the concept survives machines.
   If the server record is not empty, show the human what would be replaced
@@ -106,8 +117,9 @@ should be "like" an approved one follows `concept-process.md` → New area.
     NOTES.md.
   - `existing:<handle>` → work in the recorded theme dir (pull that theme
     if missing locally) and push into the work the same way.
-- Invoke `blocofy-theme-kit`: tokens from DNA → section vocabulary → chrome +
-  aliases → motion pass (consult `gsap-skills`).
+- Load the `blocofy-theme-kit` skill: tokens from DNA → section vocabulary →
+  chrome + aliases → motion pass (consult the GSAP skills when installed,
+  otherwise GSAP's documentation).
 - Verify through preview links of the work (platform SKILL §3), regenerated
   after each push or settings change. Collection detail pages have no
   preview link: check them in `blocofy theme dev`, which serves the draft
@@ -123,11 +135,11 @@ should be "like" an approved one follows `concept-process.md` → New area.
 - `blocofy-media` set list per family (from content, `asset-system.md`) →
   generate → register in `media-registry.json` → upload → wire CDN URLs.
 - Gate: grep for placeholder markers returns nothing; every media URL is
-  tenant CDN.
+  on the site's CDN.
 
 ## Phase 6 — QA
 
-- Invoke `blocofy-qa`: page sweep (all routes), interaction sweep, responsive
+- Load the `blocofy-qa` skill: page sweep (all routes), interaction sweep, responsive
   sweep, reduced-motion pass. Fix-and-rerun until green.
 - Write the QA report section into `.blocofy-build/NOTES.md`.
 
@@ -138,5 +150,5 @@ should be "like" an approved one follows `concept-process.md` → New area.
   request approval and give the user the approval link; a person approves.
   The agent never runs `theme publish`, `publish_theme` or `apply_release`
   itself. Smoke the live domain only after the work is `published`.
-- Retro: append lessons to tenant NOTES.md; ask which lessons should be
+- Retro: append lessons to `.blocofy-build/NOTES.md`; ask which lessons should be
   promoted to the kit repo (PR) — client-specific details stay behind.

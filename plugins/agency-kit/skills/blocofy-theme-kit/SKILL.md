@@ -1,6 +1,7 @@
 ---
 name: blocofy-theme-kit
-description: Use when writing or editing Blocofy theme files (layout, section, partial, asset - Liquid, CSS, JS) - starting a theme from the skeleton, adding or fixing a section or its {% schema %}, mapping design-dna.json to CSS tokens, header/footer chrome, fonts, motion, or a section's accessibility. TR triggers - tema yaz, section oluştur, bölüm ekle, tema iskeleti, üstbilgi, altbilgi, chrome, header footer (ASCII - section olustur, bolum ekle, ustbilgi, altbilgi).
+description: Use when writing or editing Blocofy theme files - layout, section, partial, asset in Liquid, CSS, JS (TR - tema yaz, section oluştur, bölüm ekle, tema iskeleti, üstbilgi, altbilgi, chrome, header footer; ASCII - section olustur, bolum ekle, ustbilgi, altbilgi) - starting a theme from the skeleton, adding or fixing a section or its {% schema %}, mapping design-dna.json to CSS tokens, header/footer chrome, fonts, motion, or a section's accessibility.
+compatibility: Needs a Blocofy site and its keys, the blocofy CLI (Node 22.20+), curl and network access; reads .blocofy-build/design-dna.json written by blocofy-orchestrator. Written for any Agent Skills client; tested in Claude Code.
 ---
 
 # Blocofy Theme Kit
@@ -8,6 +9,15 @@ description: Use when writing or editing Blocofy theme files (layout, section, p
 How to write Blocofy themes with this kit. Input: `.blocofy-build/design-dna.json`
 (contract owned by blocofy-orchestrator). Output: a theme directory pushed into
 a theme work via `blocofy-platform` recipes.
+
+Terms: the **site folder** is the one folder that holds this site's
+`.env.local`, `AGENTS.md` (or `CLAUDE.md`), `.blocofy-build/` and `theme/`;
+the agent works there. **`<skill-dir>`** is the folder this SKILL.md was
+loaded from (your agent shows it when it loads the skill; if not:
+`find ~ . -maxdepth 6 -type d -name blocofy-theme-kit -path '*skills*' 2>/dev/null | head -1`).
+Other skills are named plainly ("load the `blocofy-platform` skill"); some
+agents show a prefix, for example `agency-kit:blocofy-platform` in Claude
+Code.
 
 ## Non-negotiables
 
@@ -51,9 +61,10 @@ a theme work via `blocofy-platform` recipes.
 - **Browser support policy (default).** Baseline Widely available features
   are used freely. Newly available features are allowed only when they
   degrade gracefully or the fallback is ≤ 20 lines with no extra dependency;
-  otherwise pick the older pattern. A tenant `CLAUDE.md` line starting
-  `**Browser Support:**` overrides this default.
-- **Optional companion: the `modern-web-guidance` skill.** When it is
+  otherwise pick the older pattern. A line starting `**Browser Support:**`
+  in the site folder's `AGENTS.md` (or `CLAUDE.md`) overrides this default.
+- **Optional companion: the `modern-web-guidance` skill**
+  (GoogleChrome/modern-web-guidance, installed separately). When it is
   installed, search it while writing dialogs, popovers, menus, form
   validation/autofill, tables and image priority. It never overrides this
   kit. Precedence, highest first: this skill's non-negotiables and token
@@ -69,14 +80,16 @@ a theme work via `blocofy-platform` recipes.
 0. Confirm the orchestrator's provenance decision (`themeOrigin` in STATE.md):
    greenfield = skeleton below; existing = pull OUR instance and skip step 1.
    Never base new design work on a pulled platform-default theme.
-1. Copy `assets/skeleton/` → tenant `theme/` dir; set prefix, fonts, tokens.
+1. Copy `<skill-dir>/assets/skeleton/` → `theme/` in the site folder; set
+   prefix, fonts, tokens.
 2. Write the section vocabulary from the design DNA's `sections_sketch`, one
    Liquid file per section, presets filled with neutral placeholder copy.
 3. Chrome: header + footer sections (`areas`) + alias/legacy handling
    (`references/chrome-pattern.md`).
 4. Motion pass last, over working static sections
-   (`references/motion-adapter.md`; consult `gsap-skills` modules for depth:
-   `gsap-scrolltrigger` for pin/scrub, `gsap-performance` before shipping).
+   (`references/motion-adapter.md`; for depth consult the GSAP skills when
+   installed, from greensock/gsap-skills: `gsap-scrolltrigger` for pin/scrub,
+   `gsap-performance` before shipping; otherwise GSAP's own documentation).
 5. Push into the theme work (`blocofy theme push <dir> --draft --work <wk_…>`,
    `blocofy-platform`), then iterate
    with `blocofy theme dev`: its local view on `127.0.0.1` renders your local

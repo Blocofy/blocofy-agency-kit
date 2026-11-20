@@ -25,7 +25,7 @@ Kapı: "iki elle yazılmış kaynak yok" ya da "her birleşen değişiklikte eş
 ## Güvenlik kuralları
 
 - Tüm anahtarlar `.env.local`'de (izin 600, gitignore). Oturumlarda token metni yazdırılmaz.
-- `.mcp.json` yalnız `${ENV}` açılımı kullanır; literal token bulunursa hemen kaldırılır ve anahtar döndürülür.
+- Ajanın MCP yapılandırma dosyası (`.mcp.json`, `.codex/config.toml`, `.gemini/settings.json`, …) anahtarı yalnız ortam değişkeninden okur; literal token bulunursa hemen kaldırılır ve anahtar döndürülür.
 - Anahtarlar en az yetkiyle açılır; eksik yetki (ör. form kayıtlarını okuma) açıkça istenir.
 - **Canlıya yazma:** scriptler ve ajan yalnız taslağa yazar; canlıya çıkışı bir kişi onaylar. Blocofy'da ajan `--live`, `theme publish` ve `allow_live` kullanmaz: tema değişikliği tema çalışmasına yazılır, bir kişi önizlemeyi görüp panelde onaylar (`blocofy-platform`). Önizlemesi olmayan yazımlar (yayınlanmış kayıt, koleksiyon şeması, menü, site ayarı, form, canlı sayfanın SEO ve yayın durumu, silme) `blocofy-platform` `references/live-writes.md`'deki dört satırlık durağı ister. Test alan adı bu kuralı değiştirmez. Başka bir platformda canlıya çıkışın hangi insan onayına bağlandığını adapter yazar.
 - Form test alıcısı ajansa ait, belgelenmiş bir adrestir; kişisel adres geçici bile olsa `decisions.md`'ye yazılır ve yayın öncesi geri alınır.

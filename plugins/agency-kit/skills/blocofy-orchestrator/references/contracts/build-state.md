@@ -4,7 +4,7 @@ Single writer: the orchestrator. Human-readable markdown so anyone can open it
 and see where the build stands.
 
 ```markdown
-# Build State — <workspace dir name>
+# Build State — <site folder name>
 contractVersion: 1
 updated: YYYY-MM-DD HH:MM
 

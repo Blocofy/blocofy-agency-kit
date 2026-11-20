@@ -1,5 +1,8 @@
 # Extended model notes
 
+Model and tool names are those of the generation server this skill was written
+against (`SKILL.md`, Generation tools); another generator has its own.
+
 Dated notes (2026-07). Re-verify with `images_models_list` /
 `video_models_list` before the first round of every project; prefer
 entries with `agentRecommendation.tier: sota`, lowest rank.

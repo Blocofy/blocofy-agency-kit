@@ -1,12 +1,29 @@
 ---
 name: blocofy-platform
-description: Use whenever touching a Blocofy site through its MCP tools, CLI or REST API - before any write, when choosing between them, when a call is refused, and when deciding whether a change needs a person's approval (tema push, tema çalışması, sayfa belgesi, medya yükleme, taslak/canlı tema, preview, publish, koleksiyon/kayıt CRUD). TR triggers - Blocofy, tema, taslak, yayınla, sayfa belgesi, medya yükle.
+description: Use when touching a Blocofy site through its MCP tools, CLI or REST API (TR - Blocofy, tema, taslak, yayınla, sayfa belgesi, medya yükle) - before any write, when choosing between them, when a call is refused, and when deciding whether a change needs a person's approval (tema push, tema çalışması, sayfa belgesi, medya yükleme, taslak/canlı tema, preview, publish, koleksiyon/kayıt CRUD).
+compatibility: Needs a Blocofy site and its keys in the site folder's .env.local, bash, curl, jq and network access; the blocofy MCP server or the blocofy CLI (Node 22.20+). Written for any Agent Skills client; tested in Claude Code.
 ---
 
 # Blocofy Platform Operations
 
 Single source of truth for **how to touch Blocofy**. Other skills link here;
 never re-derive these mechanics.
+
+## Terms
+
+- **Site folder**: the one folder that holds this site's `.env.local`, the
+  agent's MCP config, `AGENTS.md` (or `CLAUDE.md`), `.blocofy-build/` and the
+  theme. The agent is started there and every command is run from there.
+- **`<skill-dir>`**: the folder this SKILL.md was loaded from. Your agent shows
+  it when it loads the skill; if it does not, find it with
+  `find ~ . -maxdepth 6 -type d -name blocofy-platform -path '*skills*' 2>/dev/null | head -1`.
+  Scripts are always run through the interpreter:
+  `bash <skill-dir>/scripts/…`.
+- **Other skills** are named plainly ("load the `blocofy-qa` skill"); some
+  agents show a prefix, for example `agency-kit:blocofy-qa` in Claude Code.
+- **MCP tools**: "`site_status` (MCP)" means the `site_status` tool of the
+  MCP server registered as `blocofy`. Agents prefix tool names differently,
+  so match on the bare tool name.
 
 ## Theme changes: drafts are free, live goes through one door
 
@@ -33,32 +50,45 @@ write. Table and wording: `references/live-writes.md`.
 
 ## 0. Environment contract (read this first, every session)
 
-All tenant values come from the workspace — never hardcode them:
+All site values come from the site folder — never hardcode them:
 
 ```bash
-# tenants/<domain>/.env.local  (gitignored)
-BLOCOFY_URL=…            # tenant site URL
-BLOCOFY_CLI_TOKEN=…      # bcf_… / bcf2_… (CLI token)
-BLOCOFY_TOKEN=…          # same value; the name the CLI reads for theme files
-BLOCOFY_API_TOKEN=…      # blcf_… (API key; used by MCP, api.sh, doctor.sh)
-BLOCOFY_API_KEY=…        # same value; the name the CLI reads for theme works
+# <site folder>/.env.local  (gitignored)
+# the person fills in three values:
+BLOCOFY_URL=…                          # the site's URL
+BLOCOFY_API_TOKEN=…                    # blcf_… (API key; used by MCP, api.sh, doctor.sh)
+BLOCOFY_CLI_TOKEN=…                    # bcf_… / bcf2_… (CLI token)
+# three more are derived in the same file, for the names the CLI reads:
+BLOCOFY_TOKEN="$BLOCOFY_CLI_TOKEN"     # theme files
+BLOCOFY_API_KEY="$BLOCOFY_API_TOKEN"   # theme works
 BLOCOFY_API_URL=https://app.blocofy.com
 ```
 
+The file is loaded by a shell (`set -a; . ./.env.local; set +a`) before the
+agent starts, so all six are in the agent's environment. If they are not
+there, do not read the file yourself and do not ask for the values: ask the
+person to load it and restart you from that terminal. One terminal holds one
+site's keys; when the person says they changed site or terminal, run the
+doctor again and read back the site name.
+
 - CLI needs `export BLOCOFY_URL=… BLOCOFY_TOKEN=$BLOCOFY_CLI_TOKEN` — otherwise
-  it uses `~/.blocofy/credentials.json`, which may point at a **different tenant**.
+  it uses `~/.blocofy/credentials.json`, which may point at a **different site**.
   Always confirm the target with `blocofy status` before writing anything.
 - A theme work belongs to the credential that started it. Start it and write
   to it through the same key: a work started over MCP is written over MCP
   (or by the CLI holding that same API key in `BLOCOFY_API_KEY`); a CLI push
   into a work needs both the CLI token and the API key of the same site.
 - Admin REST base: `https://app.blocofy.com/api/v1`, `Authorization: Bearer $BLOCOFY_API_TOKEN`.
-- `.mcp.json` must use `"Bearer ${BLOCOFY_API_TOKEN}"` env expansion — never a literal token.
-- Run `scripts/doctor.sh` at the start of a build (Phase 0 gate).
+- The agent's MCP config in the site folder must read the key from the
+  `BLOCOFY_API_TOKEN` environment variable, never a literal token. File and
+  syntax differ per agent: kit README, "Connect a site".
+- Run `bash <skill-dir>/scripts/doctor.sh` from the site folder at the start
+  of a build (Phase 0 gate).
 
 ## 1. Operation → channel matrix
 
-Channels: **MCP** (`mcp__blocofy__*`), **CLI** (`blocofy`), **REST** (curl).
+Channels: **MCP** (tools of the server registered as `blocofy`; see Terms),
+**CLI** (`blocofy`), **REST** (curl).
 Pick per operation; verify dates show when a row was last confirmed.
 
 | Operation | Channel | Why / trap | Verified |
@@ -75,8 +105,8 @@ Pick per operation; verify dates show when a row was last confirmed.
 | Theme asset write (fallback) | REST | `PUT /themes/{id}/assets {path,kind,content}` when CLI is unavailable | 2026-07 |
 
 Transport trap: python `urllib` hits Cloudflare 1010 on `app.blocofy.com` —
-**use curl** (or drive curl from python via subprocess). Fetching *tenant site*
-pages with urllib is fine.
+**use curl** (or drive curl from python via subprocess). Fetching the *site's
+own public* pages with urllib is fine.
 
 ## 2. Core model (why drafts are safe)
 
@@ -101,7 +131,7 @@ The CLI signed preview (`theme dev` Preview URL, `?preview=<jwt>`) is
 per-page link:
 
 ```bash
-api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | jq -r .preview_link.url
+bash <skill-dir>/scripts/api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | jq -r .preview_link.url
 # MCP: create_preview_link · list_preview_links · revoke_preview_link
 ```
 
@@ -132,7 +162,7 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
 | File | Content |
 |---|---|
 | `references/auth-tokens.md` | env layering, CLI credentials, token rotation, preview-link lifecycle |
-| `references/api-transport.md` | curl conventions, Cloudflare notes, `scripts/api.sh` usage |
+| `references/api-transport.md` | curl conventions, Cloudflare notes, `api.sh` usage |
 | `references/pages-documents.md` | PageDocument v2 shape, document-PATCH-alone rule, publish/trash lifecycle |
 | `references/themes-instances.md` | draft/live model, instance-page binding, chrome endpoints, publish flow |
 | `references/media.md` | upload recipe, MIME table, CDN URL pattern, first-resize 502 retry + cache warm |
@@ -141,5 +171,7 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
 
 ## 5. Scripts
 
-- `scripts/doctor.sh` — validates env vars, CLI presence and API reachability; run as Phase 0 gate.
-- `scripts/api.sh` — thin curl wrapper: `api.sh GET "/pages?limit=5"`, `api.sh PATCH "/pages/<id>" @doc.json`. It refuses DELETE, page publish, site-settings and menu writes unless `LIVE_WRITE_OK=1` is set for that one call; set it only after the human's yes, or for the two cases `references/live-writes.md` lists as needing no stop (publishing a page of a draft theme, revoking a preview link).
+Run both from the site folder.
+
+- `bash <skill-dir>/scripts/doctor.sh` — validates env vars, CLI presence and API reachability, names the site the key belongs to, and warns when an agent config file holds a literal token; run as Phase 0 gate.
+- `bash <skill-dir>/scripts/api.sh` — thin curl wrapper: `bash <skill-dir>/scripts/api.sh GET "/pages?limit=5"`, `bash <skill-dir>/scripts/api.sh PATCH "/pages/<id>" @doc.json`. It refuses DELETE, page publish, site-settings and menu writes unless `LIVE_WRITE_OK=1` is set for that one call; set it only after the human's yes, or for the two cases `references/live-writes.md` lists as needing no stop (publishing a page of a draft theme, revoking a preview link).

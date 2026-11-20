@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Legacy-pattern scan for a Blocofy theme, Liquid templates included.
-#   Usage: legacy-scan-liquid.sh <theme-dir> [--json]
+#   Usage: bash <skill-dir>/scripts/legacy-scan-liquid.sh <theme-dir> [--json]
 # `modern-web-guidance legacy-scan` reads .css/.js/.html but skips .liquid, so
 # this copies the theme to a temp dir with every .liquid renamed to .html and
 # scans the copy. The theme itself is never modified.

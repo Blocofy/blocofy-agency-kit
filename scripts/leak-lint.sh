@@ -17,3 +17,15 @@ if grep -rInE "$PATTERNS" --exclude-dir=.git --exclude=.git --exclude="leak-lint
   exit 1
 fi
 echo "✓ Leak lint clean."
+
+# The version lives in two manifests. plugins/agency-kit/.claude-plugin/plugin.json
+# is the source; the portable plugins/agency-kit/plugin.json must match it.
+if ! command -v jq >/dev/null 2>&1; then
+  echo "✗ Version check needs jq." >&2
+  exit 1
+fi
+if ! jq -e --slurpfile a plugins/agency-kit/.claude-plugin/plugin.json '.version == $a[0].version' plugins/agency-kit/plugin.json >/dev/null; then
+  echo "✗ plugin.json version drift: plugins/agency-kit/plugin.json and plugins/agency-kit/.claude-plugin/plugin.json differ." >&2
+  exit 1
+fi
+echo "✓ Manifest versions match."

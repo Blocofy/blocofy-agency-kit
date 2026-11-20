@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Thin Blocofy Admin REST wrapper.
-#   api.sh GET  "/pages?limit=5"
-#   api.sh POST "/pages/<id>/publish"
-#   api.sh PATCH "/pages/<id>" @document.json
-# Reads BLOCOFY_API_TOKEN from env (source .env.local first).
+# Run from the site folder, through bash (<skill-dir> = this skill's folder):
+#   bash <skill-dir>/scripts/api.sh GET  "/pages?limit=5"
+#   bash <skill-dir>/scripts/api.sh POST "/pages/<id>/publish"
+#   bash <skill-dir>/scripts/api.sh PATCH "/pages/<id>" @document.json
+# Reads BLOCOFY_API_TOKEN from env (load the site folder's .env.local first).
 set -euo pipefail
 
-: "${BLOCOFY_API_TOKEN:?BLOCOFY_API_TOKEN not set — source the tenant .env.local}"
+: "${BLOCOFY_API_TOKEN:?BLOCOFY_API_TOKEN not set — load .env.local from the site folder}"
 METHOD=${1:?method}; PATHQ=${2:?path}; BODY=${3:-}
 
 # Writes with no preview on the platform (references/live-writes.md). The path

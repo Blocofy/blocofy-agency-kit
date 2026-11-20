@@ -14,10 +14,10 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - Proje dizini, git, `.gitignore` (`.env*`, `session/`, `dist/` gerekiyorsa).
-- `.env.local` (izin 600). Anahtarlar en az yetkiyle; `.mcp.json` yalnız `${ENV}` açılımı kullanır, literal token yasak.
+- `.env.local` (izin 600). Anahtarlar en az yetkiyle; ajanın MCP yapılandırma dosyası (`.mcp.json`, `.codex/config.toml`, `.gemini/settings.json`, …; ajana göre dosya ve yazım: kit README, "Connect a site") anahtarı yalnız ortam değişkeninden okur, literal token yasak.
 - `STATE.md`, `decisions.md`, `open-questions.md` şablondan açılır.
 - Intake soruları: karar vericiler ve onay kanalı; marka varlıkları (logo, kılavuz, font lisansları); içerik kaynakları (katalog, Excel/ERP, mevcut site, hiçbiri); mevcut alan adı ve barındırma; hukuki gereksinim (KVKK, GDPR, sektör); analitik/pazarlama araçları; bütçe (efor, AI medya); hedef tarih.
-- Hedef platform biliniyorsa doctor çalışır (Blocofy: `blocofy-platform` `scripts/doctor.sh`). API istemcisinin WAF/CDN tarafından engellenmediği doğrulanır.
+- Hedef platform biliniyorsa doctor çalışır (Blocofy: site klasöründen `bash <skill-dir>/../blocofy-platform/scripts/doctor.sh`; `<skill-dir>` için `../SKILL.md` Terimler). API istemcisinin WAF/CDN tarafından engellenmediği doğrulanır.
 - Çok dilli sitede **platformun ikinci bir dili etkinleştirebildiği şimdi doğrulanır** (plan, belge ve salt okuma ile). Hangi diller olacağı burada değil Faz 2'de kararlaştırılır; kararlaştırılan diller Faz 8'in başında etkinleştirilip doğrulanır. Doğrulamak için deneme etkinleştirmesi gerekiyorsa bu bir site ayarı yazımıdır: Blocofy'da `blocofy-platform` `references/live-writes.md` durağıyla, açık onayla yapılır. Etkinleştirilemiyorsa engel `open-questions.md`'ye yazılır; tema ve içerik modeli dil-bağımsız ilerler.
 
 **Çıktı:** `STATE.md` (mod henüz `undecided`), `decisions.md`, `open-questions.md`.
@@ -34,7 +34,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 **Yapılacaklar** (bağımsız araştırmalar paralel alt ajanlarla)
 - **Marka → design DNA.** Kaynağa göre dal:
   - Katalog/marka kılavuzu var: vektör renk çıkarımı, font tespiti, tekrar eden kalıplar, font lisans sorusu.
-  - Yalnız mevcut site var: `blocofy-qa` `scripts/reference-recon.mjs` ile keşif + ekran görüntüleri (dış skill gerekmez); ücretli tema/şablon lisans uyarısı.
+  - Yalnız mevcut site var: `node <skill-dir>/../blocofy-qa/scripts/reference-recon.mjs` ile keşif + ekran görüntüleri (dış skill gerekmez); ücretli tema/şablon lisans uyarısı.
   - Hiçbir şey yok: brief + rakip taraması + sanat yönetimi alt ajanı; müşteriye 2–3 yön panosu (dış tasarım skill'i gerekmez).
 - **Mevcut site denetimi:** sayfa ve içerik envanteri, taşınacak/bırakılacak içerik, desteksiz iddialar (sertifika, sayı, ülke listesi) işaretlenir.
 - **Eski URL envanteri:** sitemap + tam tarama + (erişim varsa) Search Console'da son 12 ayda tıklama/backlink alan sayfalar → `url-map.csv` eski sütunu.
@@ -52,7 +52,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Giriş:** Faz 1 çıktıları diskte.
 
-**Yapılacaklar** (soru soru; `superpowers:brainstorming` kuruluysa onunla, kit dışı ve isteğe bağlı)
+**Yapılacaklar** (soru soru; superpowers paketinin `brainstorming` skill'i kuruluysa onunla, kit dışı ve isteğe bağlı)
 - **Mod:** `prototype-first | theme-direct | takeover | migration` (ölçütler SKILL.md).
 - **Platform:** `adapters/ADAPTER-TEMPLATE.md` sorularıyla adaylar karşılaştırılır.
 - **Diller ve URL şeması:** sitenin dilleri burada kararlaştırılır (Faz 0 yalnız platformun yapabildiğini doğrular); varsayılan dilin öneki, slug çeviri kuralı, eksik çeviri politikası (gizle / varsayılana düş).
@@ -74,11 +74,11 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - **Spec:** karar özeti, tasarım sistemi (token değerleri, tipografi, şekil, bileşen kütüphanesi), kavram ve imza öğesi, sayfa senaryoları, site haritası, rol/ekip.
-- **Plan** (`superpowers:writing-plans` kuruluysa onunla; kit dışı, yoksa elle): Global Constraints (token değerleri, fontlar, motion bütçesi, URL kuralı, a11y, veri kuralı), dosya yapısı, `data-schema.md`, `dom-contract.md`, 8–12 görev; her görevin test ve kabul ölçütü.
+- **Plan** (superpowers paketinin `writing-plans` skill'i kuruluysa onunla; kit dışı, yoksa elle): Global Constraints (token değerleri, fontlar, motion bütçesi, URL kuralı, a11y, veri kuralı), dosya yapısı, `data-schema.md`, `dom-contract.md`, 8–12 görev; her görevin test ve kabul ölçütü.
 - **Roller** `roles.md` şablonlarından üretilir; girdi yolları gerçek dosyalarla doğrulanır.
 - **Bütçeler** spec'e yazılır: LCP, INP, CLS, toplam JS KB, hero medya KB; AI medya üst sınırı.
 
-**Çıktı:** `docs/specs/<tarih>-site-design.md`, `docs/plans/<tarih>-prototype.md`, `data-schema.md`, `dom-contract.md`, `.claude/agents/<önek>-*.md`.
+**Çıktı:** `docs/specs/<tarih>-site-design.md`, `docs/plans/<tarih>-prototype.md`, `data-schema.md`, `dom-contract.md`, `docs/roles/<önek>-*.md` (ajan destekliyorsa kendi ajan dizininde de; `roles.md`).
 **Kapı:** Plan öz-incelemesi (spec kapsaması, yer tutucu taraması, isim tutarlılığı) temiz; rol tanımlarındaki her girdi yolu `test -e` ile var.
 **Onay:** Müşteri: spec'i okudu ve onayladı (tarihli).
 
@@ -90,7 +90,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - Sıra: veri → build/check → tokenlar → layout/header/footer → sayfa şablonları → etkileşim JS → motion → QA.
-- Görev başına taze alt ajan, görev sonu spec + kalite incelemesi, ledger dosyası (`superpowers:subagent-driven-development` kuruluysa onunla; kit dışı, yoksa aynı düzen elle).
+- Görev başına taze alt ajan, görev sonu spec + kalite incelemesi, ledger dosyası (superpowers paketinin `subagent-driven-development` skill'i kuruluysa onunla; kit dışı, yoksa aynı düzen elle).
 - Gerçek içerikle çalış. Yer tutucu yalnız verisi olmayan alanda, görünür biçimde işaretli ve `content-inventory.csv`'de kayıtlı.
 - Mimari: `prototype-architecture.md`.
 
@@ -107,7 +107,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - **Son inceleme:** işe dahil olmayan bir ajan spec ve planla karşılaştırır; bulgular önem sırasıyla, dosya:satır kanıtıyla. Bulgular tek düzeltme dalgasında kapanır, kapsamlı yeniden inceleme yapılır.
-- **UX eleştirisi:** yine bağımsız ajan, persona görevleri üzerinden (`design:design-critique` kuruluysa ek girdi; kit dışı, isteğe bağlı).
+- **UX eleştirisi:** yine bağımsız ajan, persona görevleri üzerinden (bir tasarım eleştirisi skill'i kuruluysa ek girdi, ör. Claude Code'da `design:design-critique`; kit dışı, isteğe bağlı).
 - **v2 planı** üç pakete ayrılır: A düzeltme, B yapısal, C kreatif. Müşteri paket paket onaylar.
 - Ölçüm: Lighthouse mobil (3 temsilci sayfa), kaydırma ve etkileşim testleri (proje scriptleri; kitte yok).
 
@@ -160,7 +160,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 - **Diller:** Faz 2'de kararlaştırılan diller etkinleştirilir ve aktif oldukları salt okumayla doğrulanır. Dil etkinleştirme site ayarı yazımıdır; Blocofy'da durak ister (`blocofy-platform` `references/live-writes.md`).
 - **Taslak izolasyonunu** küçük bir deneme sayfasıyla test et: sayfa taslak temaya bağlanıyor ve canlıda görünmüyor mu. Bozuksa dur, bulguyu insana bildir ve `decisions.md`'ye yaz; ajan kurulumu canlıya taşımaz.
 - **Capture:** `capture-map.md` doldurulur. Blocofy'da sözleşme dosyalarını orchestrator Phase 1–3 bu haritadan yazar: tokenlar + `design-dna.md` + `decisions.md` → `design-dna.json` (sözleşme v2); `ia-sitemap.md` → `brief.md`; `data/*.json` → `content-model.json`.
-- Eski tenant verisi varsa yedeklenir (`legacy-backup/`). Silme ancak durakla alınan açık onaydan sonra yapılır.
+- Sitede eski veri varsa yedeklenir (`legacy-backup/`). Silme ancak durakla alınan açık onaydan sonra yapılır.
 - Koleksiyon şemaları ve formlar sözleşmeden kurulur. Yeni koleksiyon serbesttir; var olan şema, form, menü ve site ayarı değişikliği durak ister.
 - URL şeması platformda değiştiyse `url-map.csv` yeni sütunu burada yeniden üretilir.
 - Blocofy'da bu fazı `blocofy-orchestrator` yürütür (Phase 0–3) ve durumunu `.blocofy-build/STATE.md`'ye yazar; bu skill `capture-map.md`'yi teslim eder, kapıyı denetler ve proje `STATE.md`'sine yalnız işaretçi ile kendi kapı kanıtını yazar.

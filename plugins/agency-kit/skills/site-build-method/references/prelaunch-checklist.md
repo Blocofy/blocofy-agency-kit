@@ -44,7 +44,7 @@ Projeye kopyalanır ve işaretlenir. Her maddenin yanına kanıt dosyası ya da 
 - [ ] Reduced-motion ve no-JS'de içerik tam
 
 ## Güvenlik
-- [ ] Depoda ve `.mcp.json`'da literal token yok (grep)
+- [ ] Depoda ve ajan yapılandırma dosyalarında (`.mcp.json`, `.codex/config.toml`, `.gemini/settings.json`, …) literal token yok (grep)
 - [ ] Anahtarlar en az yetkiyle; devir-teslimde döndürülecekler listelendi
 - [ ] Proje scriptleri yalnız taslağa yazıyor; Blocofy'da `--live`, `theme publish`, `allow_live` hiçbir scriptte yok (grep)
 - [ ] CDN'den yüklenen her script ve stil dosyası tam sürüme sabitli, `integrity` ve `crossorigin` taşıyor (grep). Fontlar sitenin kendi alanından yüklenir; üçüncü taraf font isteği yok

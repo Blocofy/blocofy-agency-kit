@@ -30,5 +30,5 @@ tarihi anlatmaz; sayılar ve proje ayrıntıları bilerek yoktur.
 | Yapay zekâ ile medya harcaması kayıt dışıydı | Medya bütçesi, harcama kapısı ve `credits.md` |
 | İkinci dilin açılışı takıldı ve fark edildiğinde iş ilerlemişti | Faz 0'da platformun ikinci dili etkinleştirebildiğini doğrula; diller Faz 2'de kararlaştırılır, Faz 8 başında etkinleştirilip doğrulanır |
 | Kontrast iddiası kanıt dosyasına bağlı değildi | Kontrast matrisi dosyası kapıda |
-| Rol tanımları yazıldı ama alt ajanlar genel tiple başlatıldı; tanımlar spec değiştikçe güncellenmedi | Rolü ajan tipi olarak çağır; her faz başında güncellik kontrolü |
+| Rol tanımları yazıldı ama alt ajanlar genel tiple başlatıldı; tanımlar spec değiştikçe güncellenmedi | Rolü kendi tanımıyla başlat; her faz başında güncellik kontrolü |
 | Kapsam, geç gelen resmi veriyle büyüdü | Faz 3 planında veri kaynağının onay tarihi; değişiklik kontrolü |

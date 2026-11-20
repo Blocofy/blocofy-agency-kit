@@ -16,8 +16,9 @@ has only read about is not approved: approval means they saw it and picked it.
 
 ### 1. Specialist brief
 
-Dispatch subagents before drawing anything: art direction always; motion,
-copy and UX when the brief touches them. Each reads `brief.md` and returns a
+Before drawing anything, give each specialist brief to a separate agent
+(`SKILL.md`, Terms): art direction always; motion, copy and UX when the brief
+touches them. Each reads `brief.md` and returns a
 concept sentence, what it changes on the page, and what it rules out. The
 orchestrator merges; it does not invent the concept alone.
 
@@ -88,8 +89,10 @@ covers). Process and series rule: `blocofy-media` `references/asset-system.md`.
 
 ### 6. Independent review
 
-A subagent that did not work on the concept reviews board, matrix and DNA
-against the brief. Run it again after any revision that changes a family or
+A separate agent that did not work on the concept (`SKILL.md`, Terms)
+reviews board, matrix and DNA against the brief and writes
+`concept/review.md`. Record in STATE.md whether the review was independent.
+Run it again after any revision that changes a family or
 the first screen, and before publish.
 
 ## New area on an approved concept
@@ -97,7 +100,8 @@ the first screen, and before publish.
 When the client asks for "something like X, but different" for another area:
 
 1. Take the idea only (what made X work).
-2. Dispatch a specialist to plan the new area: its own scene or device,
+2. Give a specialist brief to a separate agent (`SKILL.md`, Terms) to plan
+   the new area: its own scene or device,
    layout, interaction, mobile behaviour, and at least two discarded
    alternatives with the reason.
 3. Show the plan with a rough schematic drawing (boxes and lines, no

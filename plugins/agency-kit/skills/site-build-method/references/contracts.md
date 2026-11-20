@@ -160,7 +160,7 @@ Kapı: her satır `done`; sözleşme dosyaları platform skill'lerinin kapı kon
 ## parity-report.md (yazar: Faz 9)
 
 ```markdown
-# Eşdeğerlik raporu — <tarih>
+# Eşdeğerlik raporu: <tarih>
 | Dil | Sayfa türü | Sayfa | Metin birebir | Geometri (blok) | Tarama | Not |
 |---|---|---|---|---|---|---|
 

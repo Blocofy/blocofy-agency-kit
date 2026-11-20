@@ -1,4 +1,4 @@
-# Müşteri onayı — <aşama: site haritası / spec / v2 paketleri / prototip / yayın>
+# Müşteri onayı: <aşama: site haritası / spec / v2 paketleri / prototip / yayın>
 
 - **Proje:**
 - **Onaylanan sürüm:** (prototip bağlantısı, git etiketi ya da belge yolu)

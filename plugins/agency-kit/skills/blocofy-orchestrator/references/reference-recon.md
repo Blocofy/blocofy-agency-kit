@@ -7,15 +7,16 @@ similar effect. Nothing outside this kit is needed for the recon.
 ## Run
 
 Run it first, before the brief questions, so the questions can be specific.
-From the tenant's `.blocofy-build/` directory (Playwright installed in the
-workspace):
+From the site folder's `.blocofy-build/` directory (Playwright installed in
+the site folder):
 
 ```bash
-node <blocofy-qa dir>/scripts/reference-recon.mjs "<url>" "<inner-page-url>"
+node <skill-dir>/../blocofy-qa/scripts/reference-recon.mjs "<url>" "<inner-page-url>"
 ```
 
-`<blocofy-qa dir>` is the base directory Claude Code shows when it loads the
-`blocofy-qa` skill.
+`<skill-dir>` is this skill's folder (`SKILL.md`, Terms); the `blocofy-qa`
+skill's folder is its sibling. If that folder is missing, the kit was
+installed partially: stop and ask the person to install all six.
 
 Give it the home page and one or two inner pages the client named. It writes
 `reference/recon.json` and full-page screenshots at 1440 and 390 into

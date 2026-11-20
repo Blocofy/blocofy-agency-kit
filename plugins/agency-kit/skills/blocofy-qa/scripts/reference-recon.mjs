@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* Recon of a reference site the client pointed at (Phase 1, reference route).
-   Usage: node reference-recon.mjs "<url>" ["<url-2>" …]
+   Usage (from .blocofy-build/ in the site folder):
+     node <skill-dir>/scripts/reference-recon.mjs "<url>" ["<url-2>" …]
    Reads only what a visitor's browser receives. Saves nothing from the site
    except full-page screenshots and a facts file:
      ./reference/<n>-<host>-1440.png, -390.png, ./reference/recon.json
@@ -14,7 +15,7 @@ function loadPlaywright() {
   for (const base of [import.meta.url, process.cwd() + "/package.json"]) {
     try { return createRequire(base)("playwright"); } catch { /* next */ }
   }
-  throw new Error("Playwright not found — run `npm i playwright` in this workspace and re-run from there.");
+  throw new Error("Playwright not found — run `npm i playwright` in the site folder and re-run from there.");
 }
 
 const urls = process.argv.slice(2);

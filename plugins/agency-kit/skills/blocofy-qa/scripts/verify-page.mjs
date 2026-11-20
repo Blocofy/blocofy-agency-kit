@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Page sweep for Blocofy drafts.
-   Usage: node verify-page.mjs [--expect "<text>"] "<url-1>" "<url-2>" …
+   Usage (from the site folder): node <skill-dir>/scripts/verify-page.mjs [--expect "<text>"] "<url-1>" "<url-2>" …
    URLs: one per-page preview link per static route, or `blocofy theme dev`
    local URLs (http://127.0.0.1:<port>/…) for dynamic template routes
    (platform SKILL §3).
@@ -14,11 +14,11 @@ import { createRequire } from "node:module";
 import fs from "node:fs";
 
 function loadPlaywright() {
-  // resolve from the script dir first, then from the invoking workspace (cwd)
+  // resolve from the script dir first, then from the site folder (cwd)
   for (const base of [import.meta.url, process.cwd() + "/package.json"]) {
     try { return createRequire(base)("playwright"); } catch { /* next */ }
   }
-  throw new Error("Playwright not found. Run `npm i playwright` in this workspace and re-run from there.");
+  throw new Error("Playwright not found. Run `npm i playwright` in the site folder and re-run from there.");
 }
 
 const USAGE = 'Usage: verify-page.mjs [--expect "<text>"] "<url>" ["<url-2>" …]';

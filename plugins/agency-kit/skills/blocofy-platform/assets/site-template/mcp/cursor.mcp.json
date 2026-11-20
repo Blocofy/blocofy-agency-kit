@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "blocofy": {
+      "url": "https://app.blocofy.com/api/v1/mcp",
+      "headers": { "Authorization": "Bearer ${env:BLOCOFY_API_TOKEN}" }
+    }
+  }
+}

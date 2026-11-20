@@ -18,7 +18,7 @@ Run per section before it counts as complete:
 - [ ] Reduced-motion + no-JS paths verified (a11y-nojs.md)
 - [ ] Keyboard pass: focus visible, controls reachable, aria states correct
 - [ ] Modals, menus, popovers and form validation use the native primitive
-      (a11y-nojs.md § Native UI primitives); if `modern-web-guidance` is
+      (a11y-nojs.md § Native UI primitives); if the optional `modern-web-guidance` skill is
       installed, the matching guide was searched before writing custom JS
 - [ ] Any third-party `<script>`/`<link>` the section adds is version-pinned
       with `integrity` + `crossorigin` (motion-adapter.md § CDN integrity)

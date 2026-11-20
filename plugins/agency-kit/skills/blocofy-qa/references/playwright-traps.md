@@ -3,7 +3,8 @@
 ## Loader pattern
 
 Resolve playwright via `createRequire` with a bare `"playwright"` candidate so
-scripts work wherever `npm i playwright` happened (workspace or shared dir).
+scripts work wherever `npm i playwright` happened (the site folder or a
+shared dir).
 Launch headless; fall back to `channel: "chrome"` on failure.
 
 ## Trap list
@@ -43,8 +44,10 @@ Launch headless; fall back to `channel: "chrome"` on failure.
 
 ## Verify-page sweep
 
+Run from the site folder (`<skill-dir>`: `SKILL.md`, Terms):
+
 ```bash
-node scripts/verify-page.mjs --expect "<text only the draft has>" \
+node <skill-dir>/scripts/verify-page.mjs --expect "<text only the draft has>" \
   "<link for />" "<link for /about>" "http://127.0.0.1:<port>/<a detail route>"
 ```
 

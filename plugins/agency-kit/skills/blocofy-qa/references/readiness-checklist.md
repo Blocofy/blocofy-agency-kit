@@ -20,7 +20,7 @@ the user the approval link; never publish on your own.
 - [ ] Zero placeholder text/media anywhere (search for REPLACE_, lorem, TODO)
 - [ ] All metrics/claims verifiable or removed; no invented awards/quotes
 - [ ] Client names only where the engagement is confirmed
-- [ ] All media and fonts self-hosted on the tenant CDN (no generation-service
+- [ ] All media and fonts self-hosted on the site's CDN (no generation-service
       or third-party hotlinks, no request to a third-party font host)
 
 ## Hygiene
@@ -34,10 +34,11 @@ the user the approval link; never publish on your own.
 - [ ] Alias/legacy sections documented with a removal plan
 - [ ] Analytics/integrations as the client requested — nothing extra
 - [ ] Every CDN `<script>`/`<link rel="stylesheet">` is version-pinned with
-      `integrity` + `crossorigin` (`scripts/legacy-scan-liquid.sh` reports
-      missing ones when `modern-web-guidance` is available)
+      `integrity` + `crossorigin` (the optional
+      `bash <skill-dir>/scripts/legacy-scan-liquid.sh <theme-dir>` reports
+      missing ones; it needs network access)
 
 ## After publish
 
 - [ ] Smoke: fetch `/`, one inner page, one dynamic detail on the live domain
-- [ ] Retro: generalizable lessons promoted from tenant NOTES.md to the kit repo (PR)
+- [ ] Retro: generalizable lessons promoted from `.blocofy-build/NOTES.md` to the kit repo (PR)

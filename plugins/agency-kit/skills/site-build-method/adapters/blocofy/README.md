@@ -35,9 +35,11 @@ koleksiyonun şemasını değiştirmek durak ister.
 
 ## Hat
 
-Kit bu hat için script taşımaz. Kitteki scriptler yalnız şunlardır: `blocofy-platform`
-`scripts/api.sh` ve `scripts/doctor.sh`; `blocofy-qa` `scripts/verify-page.mjs`,
-`scripts/reference-recon.mjs` ve `scripts/legacy-scan-liquid.sh`. Aşağıdaki adımları
+Kit bu hat için script taşımaz. Kitteki scriptler yalnız şunlardır:
+`<skill-dir>/../blocofy-platform/scripts/` altında `api.sh` ve `doctor.sh` (`bash` ile);
+`<skill-dir>/../blocofy-qa/scripts/` altında `verify-page.mjs`, `reference-recon.mjs`
+(`node` ile) ve `legacy-scan-liquid.sh` (`bash` ile). Hepsi site klasöründen çalıştırılır;
+`<skill-dir>` için `../../SKILL.md` Terimler. Aşağıdaki adımları
 proje kendi scriptleriyle kurar; adlar öneridir, sağ sütun scriptin ne yapması
 gerektiğini söyler.
 

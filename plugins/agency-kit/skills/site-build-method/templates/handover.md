@@ -1,4 +1,4 @@
-# Devir-teslim — <proje>
+# Devir-teslim: <proje>
 
 ## Erişimler
 | Sistem | Hesap sahibi | Müşteriye aktarıldı | Ajans erişimi kaldırıldı / anahtar döndürüldü |

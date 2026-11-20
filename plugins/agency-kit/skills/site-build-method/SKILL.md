@@ -1,6 +1,7 @@
 ---
 name: site-build-method
-description: Use when the human wants the agency process around a client website - a static prototype approved before the CMS build, written decisions and sign-off, a prelaunch checklist, handover - or asks whether that two-stage route is worth it, or resumes a project that has a root STATE.md with phases 0-12. A plain request to build a site on Blocofy belongs to blocofy-orchestrator. TR triggers - yeni müşteri sitesi, site yapım yöntemi, prototipten temaya, hangi fazdayız, siteyi taşı, yayına hazırlık, devir teslim.
+description: Use when the human wants the agency process around a client website - a static prototype approved before the CMS build, written decisions and sign-off, a prelaunch checklist, handover (TR - yeni müşteri sitesi, site yapım yöntemi, prototipten temaya, hangi fazdayız, siteyi taşı, yayına hazırlık, devir teslim) - or asks whether that two-stage route is worth it, or resumes a project that has a root STATE.md with phases 0-12. A plain request to build a site on Blocofy belongs to blocofy-orchestrator.
+compatibility: Body is in Turkish. Needs the other five kit skills for the Blocofy phases, a Blocofy site and its keys, bash, curl, jq, Node 22.20+, network access; the blocofy MCP server or CLI. Uses separate agents (subagents) where the agent has them. Written for any Agent Skills client; tested in Claude Code.
 ---
 
 # Site Yapım Yöntemi: prototipten CMS temasına
@@ -12,7 +13,29 @@ kapıları, işi yapmayan bir gözden geçiren ve dosyada yaşayan durum.
 
 Platforma özgü ayrıntılar `adapters/<platform>/` altında. Kuralların hangi hatalardan
 çıktığı `examples/lessons.md` içinde. Bu skill hiçbir müşteri verisi içermez; müşteriye ait her
-değer proje çalışma alanındaki dosyalardan okunur.
+değer site klasöründeki dosyalardan okunur.
+
+## Terimler
+
+- **Site klasörü:** bu sitenin `.env.local`, ajanın MCP yapılandırma dosyası, `AGENTS.md`
+  (ya da `CLAUDE.md`), `STATE.md` ve `.blocofy-build/` dosyalarını tutan tek klasör. Ajan
+  orada başlatılır, komutlar oradan çalışır. Bu dosyalardaki "proje kökü" aynı yerdir.
+- **`<skill-dir>`:** bu SKILL.md'nin yüklendiği klasör. Ajan skill'i yüklerken gösterir;
+  göstermezse şununla bul:
+  `find ~ . -maxdepth 6 -type d -name site-build-method -path '*skills*' 2>/dev/null | head -1`.
+  Kitteki öteki skill'ler kardeş klasördür; scriptleri yorumlayıcıyla çalıştırılır:
+  `bash <skill-dir>/../blocofy-platform/scripts/…`, `node <skill-dir>/../blocofy-qa/scripts/…`.
+  O klasör yoksa kit eksik kurulmuştur: dur ve kişiden altı skill'in hepsini kurmasını iste.
+- **Skill adları:** "`blocofy-qa` skill'ini yükle" diye yazılır. Bazı ajanlar önek gösterir
+  (ör. Claude Code'da `agency-kit:blocofy-qa`).
+- **MCP araçları:** `blocofy` adıyla kayıtlı MCP sunucusunun araçlarıdır. Ajanlar araç
+  adına farklı önek ekler; yalın ada bak.
+- **Alt ajan:** temiz bağlamla başlayan ve yalnız adı verilen dosyaları alan ayrı bir
+  ajan. Bazı ajanlar alt ajanı yalnız açıkça istenince başlatır. Ajanın alt ajanı yoksa
+  aynı işi ayrı bir geçişte yap: yalnız adı geçen dosyaları diskten yeniden oku, sonucu
+  adı geçen dosyaya yaz, incelemenin bağımsız olmadığını `STATE.md`'ye yaz ve kişiye bu
+  adımı yeni bir oturumda çalıştırmayı öner. "Alt ajan", "bağımsız gözden geçiren" ve
+  "işe dahil olmayan ajan" geçen her yerde bu kural geçerlidir.
 
 ## Demir kurallar
 
@@ -21,7 +44,8 @@ değer proje çalışma alanındaki dosyalardan okunur.
    yazılıyorsa her değişiklik eşdeğerlik kanıtıyla birleşir.
 2. **Kanıtsız kapı yok.** "done" = tarih + komut ya da dosya + sonuç. "Temiz", "hazır",
    "çalışıyor" tek başına kanıt değildir.
-3. **İşi yapan onaylamaz.** Faz sonu incelemesi işe dahil olmayan bir ajanla yapılır.
+3. **İşi yapan onaylamaz.** Faz sonu incelemesi işe dahil olmayan bir ajanla yapılır
+   (Terimler: alt ajan).
 4. **Geri alınamaz ya da dışa dönük her adım insan onayı ister:** canlıya yazma,
    yayın, alan adı, noindex kaldırma, kredi/para harcama, müşteri adına gönderim,
    kalıcı silme.
@@ -51,15 +75,15 @@ Mod Faz 2'de seçilir ve `decisions.md`'ye gerekçesiyle yazılır.
 
 | Faz | Skill / araç | Kitte mi; kurulu değilse |
 |---|---|---|
-| 2 Kararlar | `superpowers:brainstorming` | Kit dışı, isteğe bağlı. Yoksa kararları tek tek soru sorarak al |
+| 2 Kararlar | superpowers paketinin (obra/superpowers) `brainstorming` skill'i; Claude Code'da adları `superpowers:` önekiyle görünür | Kit dışı, isteğe bağlı. Yoksa kararları tek tek soru sorarak al |
 | 1–2 Tasarım yönü (kaynak yoksa) | sanat yönetimi alt ajanı + yön panosu (`blocofy-orchestrator` `concept-process.md`); referans site varsa `blocofy-orchestrator` `reference-recon.md` | Kitte |
-| 3 Spec ve plan | `superpowers:writing-plans` | Kit dışı, isteğe bağlı. Yoksa planı `references/phases.md` Faz 3 maddelerine göre elle yaz |
-| 4 Prototip | `superpowers:subagent-driven-development` | Kit dışı, isteğe bağlı. Yoksa görev başına taze alt ajan ve görev sonu incelemeyi elle yürüt |
-| 4 Motion | `gsap-skills` (scrolltrigger, performance, plugins) | Kit dışı; platform fazında `blocofy-orchestrator` ön koşul olarak kontrol eder. Prototipte yoksa API'yi kütüphanenin kendi belgesinden doğrula |
-| 5 İnceleme | bağımsız gözden geçiren + `design:design-critique` | Gözden geçiren zorunlu. `design:design-critique` kit dışı, isteğe bağlı. Yoksa gözden geçiren eleştiriyi persona görevleri üzerinden kendisi yazar |
+| 3 Spec ve plan | superpowers paketinin `writing-plans` skill'i | Kit dışı, isteğe bağlı. Yoksa planı `references/phases.md` Faz 3 maddelerine göre elle yaz |
+| 4 Prototip | superpowers paketinin `subagent-driven-development` skill'i | Kit dışı, isteğe bağlı. Yoksa görev başına taze alt ajan ve görev sonu incelemeyi elle yürüt |
+| 4 Motion | GSAP skill'leri (`gsap-scrolltrigger`, `gsap-performance`, `gsap-plugins`; greensock/gsap-skills) | Kit dışı, isteğe bağlı; platform fazında `blocofy-orchestrator` kurulu olup olmadığına bakar. Yoksa API'yi kütüphanenin kendi belgesinden doğrula |
+| 5 İnceleme | bağımsız gözden geçiren + bir tasarım eleştirisi skill'i (ör. Claude Code'da `design:design-critique`) | Gözden geçiren zorunlu. Tasarım eleştirisi skill'i kit dışı, isteğe bağlı. Yoksa gözden geçiren eleştiriyi persona görevleri üzerinden kendisi yazar |
 | 6 Medya | `blocofy-media` (model matrisi tarihlidir, her projede doğrula) | Kitte |
 | 8–11 Platform | Blocofy için `blocofy-orchestrator` → `blocofy-platform`, `blocofy-theme-kit`, `blocofy-qa` | Kitte |
-| Rapor ve karar sayfaları | `artifact-design` | Kit dışı, isteğe bağlı. Yoksa düz HTML ya da Markdown dosyası yaz |
+| Rapor ve karar sayfaları | ajanın sayfa tasarımı skill'i (ör. Claude Code'da `artifact-design`) | Kit dışı, isteğe bağlı. Yoksa düz HTML ya da Markdown dosyası yaz |
 
 Kit dışı bir skill kurulu değilse iş durmaz ve insandan kurması istenmez; sağ sütundaki
 yol izlenir.
@@ -102,12 +126,12 @@ Her fazın kartı (giriş, yapılacaklar, çıktı, kapı, onay) `references/pha
 | 1 | Keşif | Faz 0 | `brief.md`, `design-dna.md`, `site-audit.md`, `content-inventory.csv`, `url-map.csv` (eski URL'ler) | Sayfa envanteri tam; eski site tam tarandı; her açık sorunun sahibi var | Müşteri: site haritası |
 | 2 | Kararlar | Faz 1 | `decisions.md`: mod, platform, diller, URL şeması, iş modeli, yargı alanı, analitik, bütçeler | Her kararın alternatifi ve onaylayanı yazılı | Müşteri |
 | 3 | Spec ve plan | Faz 2 | `spec.md`, `plan.md`, `data-schema.md`, `dom-contract.md`, performans + medya bütçesi | Plan öz-incelemesi temiz; yer tutucu yok | Müşteri: spec |
-| 4 | Prototip | Plan onaylı | `dist/`, check çıktısı, görev incelemeleri | check 0 hata; 3 genişlikte konsol 0; reduced-motion ve no-JS'de gizli içerik 0; plandaki her görev tam | — |
+| 4 | Prototip | Plan onaylı | `dist/`, check çıktısı, görev incelemeleri | check 0 hata; 3 genişlikte konsol 0; reduced-motion ve no-JS'de gizli içerik 0; plandaki her görev tam | Yok |
 | 5 | Bağımsız inceleme ve v2 | Faz 4 | `docs/qa/*-review.md`, v2 planı (düzeltme / yapısal / kreatif) | Kritik bulgu 0; prototip bütçeleri tutuyor | Müşteri: paketler |
 | 6 | İçerik ve medya | Faz 3 (paralel başlar) | `content-inventory.csv` onay sütunu, `.blocofy-build/media-registry.json`, `.blocofy-build/credits.md` | Yer tutucu 0 ya da işaretli ve kayıtlı; hak/lisans tam; medya bütçesi aşılmadı | Müşteri: metin |
 | 7 | Onay ve dondurma | 5 + 6 | `client-signoff.md`, git etiketi `proto-signoff` | Yazılı onay; değişiklik kontrolü başladı | Müşteri |
 | 8 | Platform kurulumu | Faz 7 | `capture-map.md`, platform sözleşmeleri, known-issues yeniden test sonuçları | Faz 2'de kararlaştırılan diller aktif ve doğrulandı; taslak izolasyonu doğrulandı; her section'ın veri kaynağı çözüldü | Ajans |
-| 9 | Tema taşıma ve eşdeğerlik | Faz 8 | Tema dizini (taslakta), `parity-report.md` | Metin birebir (bilinçli farklar kayıtlı); geometri toleransta; tarama 0; content-model ↔ tema section tipleri eşleşiyor | — |
+| 9 | Tema taşıma ve eşdeğerlik | Faz 8 | Tema dizini (taslakta), `parity-report.md` | Metin birebir (bilinçli farklar kayıtlı); geometri toleransta; tarama 0; content-model ↔ tema section tipleri eşleşiyor | Yok |
 | 10 | Yayın öncesi | Faz 9 | `prelaunch-checklist.md` işaretli | 301 doğrulandı; hukuk metinleri; izin + analitik; gerçek form testi; platform bütçesi ya da kabul edilmiş risk; geri dönüş planı | Müşteri + ajans |
 | 11 | Yayın | Açık onay; canlıya çıkışı kişi onaylar | Yayın notu | Smoke yeşil; noindex kalktı; 7. gün 404/konsol raporu | Müşteri |
 | 12 | Devir-teslim ve bakım | Faz 11 | `handover.md`, eğitim kaydı, retro, prototip arşiv kararı | Anahtarlar döndürüldü; editör eğitimi yapıldı; 30. gün SEO kontrolü; dersler kite geri yazıldı | Müşteri |

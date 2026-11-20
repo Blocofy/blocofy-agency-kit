@@ -1,19 +1,25 @@
 # Rol şablonları
 
-Yedi rol. Faz 3'te projenin önekiyle `.claude/agents/<önek>-<rol>.md` olarak üretilir.
+Yedi rol. Faz 3'te projenin önekiyle `docs/roles/<önek>-<rol>.md` olarak üretilir. Ajan
+özel ajan tanımını destekliyorsa kendi dizinine de yazılır: Claude Code
+`.claude/agents/*.md`, Codex `.codex/agents/*.toml`, Gemini `.gemini/agents/*.md`,
+Copilot `.github/agents/`, Cursor `.cursor/agents/`, OpenCode `.opencode/agents/`.
+Şablonlardaki `tools:` satırı Claude Code biçimidir; başka ajanda o ajanın araç
+adlarıyla değiştir ya da satırı sil.
 Yer tutucular: `{{ÖNEK}}`, `{{DOĞRU_KAYNAK}}`, `{{ÇIKTI}}`, `{{SAYFA_TİPLERİ}}`,
 `{{FORM_LİSTESİ}}`, `{{YÜKLENECEK_SKILL}}`.
 
 ## Kullanım kuralları
 
-- **Ajan tipi olarak çağır.** Tanımı yazıp alt ajanı `general-purpose` ile başlatmak rol
-  kurallarını devre dışı bırakır. Rol tipi yoksa istemde tanım dosyasının yolunu ver ve
-  "önce bunu oku" de.
+- **Rolü kendi tanımıyla başlat.** Tanımı yazıp genel amaçlı bir alt ajanla başlatmak rol
+  kurallarını devre dışı bırakır. Ajan özel rol tanımını desteklemiyorsa istemde tanım
+  dosyasının yolunu ver ve "önce bunu oku" de. Alt ajan hiç yoksa `../SKILL.md` Terimler
+  bölümündeki kural geçerlidir.
 - **Güncellik kontrolü (her faz başında):** tanımdaki her girdi yolu için `test -e`.
   Olmayan yol ya da spec ile çelişen sayı (ör. kayıt adedi) varsa tanım önce güncellenir.
 - **Sahiplik çakışmaz:** bir dosyanın tek sahibi olur. Ortak dosyalar (ör. `tokens.css`)
   yalnız sahibinden değişir, diğerleri öneri yazar.
-- **Alt ajan alt ajan başlatmaz.** İnceleme ana oturumdan dispatch edilir.
+- **Alt ajan alt ajan başlatmaz.** İnceleme ana oturumdan başlatılır.
 
 ---
 
@@ -82,7 +88,7 @@ description: Motion sahibi. Sahneler, performans bütçesi, reduced-motion alter
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 Doğru kaynak: motion-spec.md, dom-contract.md.
-Çıktı: src/js/motion.js. Skill: gsap-skills (scrolltrigger, performance, plugins); API'yi skill'den, kurulu değilse kütüphanenin belgesinden doğrula.
+Çıktı: src/js/motion.js. Skill: GSAP skill'leri (gsap-scrolltrigger, gsap-performance, gsap-plugins); API'yi skill'den, kurulu değilse kütüphanenin belgesinden doğrula.
 Kurallar: yalnız transform/opacity; pin bütçesi spec'teki gibi, mobilde 0; reduced-motion alternatif
 senaryo; JS düşerse içerik görünür.
 ```

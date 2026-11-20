@@ -1,6 +1,7 @@
 ---
 name: blocofy-media
-description: Use when generating, replacing or extending images or video for a Blocofy site, planning an image set or series (objects, scenes, covers), choosing an image or video model, or uploading generated media to the Blocofy media library. TR triggers - görsel üret, video üret, medya, kapak görseli, arka plan, görsel seti (gorsel uret, video uret, kapak gorseli).
+description: Use when generating, replacing or extending images or video for a Blocofy site (TR - görsel üret, video üret, medya, kapak görseli, arka plan, görsel seti; ASCII - gorsel uret, video uret, kapak gorseli), planning an image set or series (objects, scenes, covers), choosing an image or video model, or uploading generated media to the Blocofy media library.
+compatibility: Needs an image-generation MCP server (tool and model names are those of the Freepik/Magnific server; map them for another generator), a Blocofy site and its keys, curl and network access. Generation costs credits. Written for any Agent Skills client; tested in Claude Code.
 ---
 
 # Blocofy Media Pipeline
@@ -8,6 +9,19 @@ description: Use when generating, replacing or extending images or video for a B
 Every visual on a client site is either (a) the client's own asset or
 (b) generated fresh for them. Never hotlink third-party or demo media into
 anything that could ship; never leave generation-service URLs in documents.
+
+Terms: the **site folder** is the one folder that holds this site's
+`.env.local` and `.blocofy-build/`; the agent works there. Other skills are
+named plainly ("load the `blocofy-platform` skill"); some agents show a
+prefix, for example `agency-kit:blocofy-platform` in Claude Code.
+
+**Generation tools.** The tool names in this skill (`account_balance`,
+`simulate_cost`, `images_models_list`, `video_models_list`,
+`images_generate`, `creations_request_upload`, `creations_finalize_upload`,
+`creations_wait`) and the model names belong to the image-generation MCP
+server this skill was written against (Freepik/Magnific). With another
+generator, map each step to its tools; the rules stay the same. Agents
+prefix tool names differently, so match on the bare name.
 
 ## Ground rules
 
@@ -28,13 +42,14 @@ anything that could ship; never leave generation-service URLs in documents.
    Anything beyond the list, or a retry that would pass the approved total,
    goes back through the gate. After the round, append what was spent to
    `.blocofy-build/credits.md`. Batch the approved generations in parallel.
-3. **Client material leaves the workspace only on a yes.** Before the first
+3. **Client material leaves the site folder only on a yes.** Before the first
    upload of client-supplied files, or of screenshots of the client's site,
    to a generation service, tell the human which files go to which service
    and wait for a yes. Record the answer in `.blocofy-build/NOTES.md`; it
    holds for that kind of material for the rest of the project.
 4. **Self-host everything**: download the result, upload to Blocofy media
-   (platform `references/media.md` — MIME flag mandatory), use the tenant CDN URL.
+   (`blocofy-platform` skill, `references/media.md` — MIME flag mandatory), use
+   the site's CDN URL.
 5. **Truthfulness**: a generated image never stands in for something that
    exists: the client's products or packaging, team, premises, certificates,
    logos, finished projects. Those are the client's own photographs or stay

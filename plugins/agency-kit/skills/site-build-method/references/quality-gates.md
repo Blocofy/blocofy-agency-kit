@@ -36,7 +36,8 @@ kit script taşımaz; ne gerektiği ve script yoksa hangi kanıtın geçerli old
 ## Kitte scripti olmayan kapılar
 
 Kit bu kapılar için script taşımaz ve böyle bir script varmış gibi davranılmaz. Kitteki
-tek tarama aracı `blocofy-qa` `scripts/verify-page.mjs`'tir: sayfa başına önizleme
+tek tarama aracı `blocofy-qa` skill'indeki `verify-page.mjs`'tir
+(`node <skill-dir>/../blocofy-qa/scripts/verify-page.mjs`, site klasöründen): sayfa başına önizleme
 bağlantısı alır; rota başına HTTP durumu, konsol hatası, bilinmeyen section sayısı ve
 ekran görüntüsü verir. Proje kendi scriptini aşağıdaki tanıma göre yazar. Yazmadıysa
 yedek kanıt geçerlidir: yedek kanıtı işi yapan değil gözden geçiren üretir ve dosyaya

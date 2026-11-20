@@ -20,19 +20,22 @@
   with `BLOCOFY_API_URL` for theme-work commands). A new key is created with
   the "theme development" profile: it reads and works on drafts and cannot
   publish; that is the profile an agent should hold. Scoped per site
-  (pages, content, media, themes…). Never commit; never paste into `.mcp.json`
-  as a literal — use `${BLOCOFY_API_TOKEN}` expansion. If a literal ever lands
-  in a committed file, rotate the token in the admin panel.
+  (pages, content, media, themes…). Never commit; never paste into any agent
+  config file as a literal (`.mcp.json`, `.codex/config.toml`,
+  `.gemini/settings.json`, `.cursor/mcp.json`, `opencode.jsonc`, …): the
+  config reads the `BLOCOFY_API_TOKEN` environment variable (syntax per agent:
+  kit README, "Connect a site"). If a literal ever lands in a committed file,
+  rotate the token in the admin panel.
 
 ## CLI credential gotcha
 
-`blocofy login` writes `~/.blocofy/credentials.json` (machine-global). In a
-multi-tenant agency this WILL point at the wrong site eventually. Rule:
+`blocofy login` writes `~/.blocofy/credentials.json` (machine-global). In an
+agency with several sites this WILL point at the wrong site eventually. Rule:
 
 ```bash
 export BLOCOFY_URL=…            # from .env.local
 export BLOCOFY_TOKEN=$BLOCOFY_CLI_TOKEN
-blocofy status                  # ALWAYS verify tenant before any write
+blocofy status                  # ALWAYS verify the site before any write
 ```
 
 ## Preview links

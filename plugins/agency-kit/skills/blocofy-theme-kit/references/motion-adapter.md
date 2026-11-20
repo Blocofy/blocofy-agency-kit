@@ -1,8 +1,9 @@
 # Motion adapter (GSAP on Blocofy, Lenis when the DNA asks)
 
-For correct GSAP usage depth, invoke the official `gsap-skills` modules
-(`gsap-scrolltrigger`, `gsap-performance`, `gsap-timeline`). This file covers
-only the Blocofy/theme-specific glue.
+For correct GSAP usage depth, consult the official GSAP skills when they are
+installed (`gsap-scrolltrigger`, `gsap-performance`, `gsap-timeline`, from
+greensock/gsap-skills); otherwise GSAP's own documentation. They are
+optional. This file covers only the Blocofy/theme-specific glue.
 
 ## What the design DNA switches on
 

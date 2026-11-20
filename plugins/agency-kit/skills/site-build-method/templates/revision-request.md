@@ -1,4 +1,4 @@
-# Revizyon talebi — R-<no>
+# Revizyon talebi: R-<no>
 
 - **Tarih / talep eden:**
 - **Sayfa(lar) ve genişlik:** (ör. kayıt detay sayfası, 1440 px ve mobil)

@@ -1,0 +1,3 @@
+[mcp_servers.blocofy]
+url = "https://app.blocofy.com/api/v1/mcp"
+bearer_token_env_var = "BLOCOFY_API_TOKEN"

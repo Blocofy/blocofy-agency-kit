@@ -1,0 +1,8 @@
+// OpenCode connection file for versions that reject "mcp.servers"
+// (run on OpenCode 1.14). Copy to opencode.jsonc in the site folder.
+{ "$schema": "https://opencode.ai/config.json",
+  "mcp": { "blocofy": {
+    "type": "remote",
+    "url": "https://app.blocofy.com/api/v1/mcp",
+    "oauth": false,
+    "headers": { "Authorization": "Bearer {env:BLOCOFY_API_TOKEN}" } } } }

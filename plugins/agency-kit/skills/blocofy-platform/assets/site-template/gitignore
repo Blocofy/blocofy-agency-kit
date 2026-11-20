@@ -1,0 +1,18 @@
+# Keys for this site. Never commit.
+.env
+.env.local
+.env.local.*
+.env.*.local
+
+# Short-lived preview links written during a build.
+.blocofy-build/session/
+
+# Playwright and other packages installed in the site folder.
+node_modules/
+
+# Per-person agent files that can hold secrets or private settings.
+.claude/settings.local.json
+.devin/mcp_config.local.json
+AGENTS.local.md
+
+.DS_Store

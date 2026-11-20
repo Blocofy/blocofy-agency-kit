@@ -1,6 +1,7 @@
 ---
 name: blocofy-qa
-description: Use when a change to a Blocofy site has to be verified in a rendered page, before asking for publish approval, when a draft preview shows old or unexpected content, or when a Playwright check on a draft is flaky (smooth scroll, entrance animations, reduced motion). TR triggers - doğrula, kontrol et, yayına hazır mı, test et, önizleme (ASCII - dogrula, yayina hazir mi, onizleme).
+description: Use when a change to a Blocofy site has to be verified in a rendered page or before asking for publish approval (TR - doğrula, kontrol et, yayına hazır mı, test et, önizleme; ASCII - dogrula, yayina hazir mi, onizleme), when a draft preview shows old or unexpected content, or when a Playwright check on a draft is flaky (smooth scroll, entrance animations, reduced motion).
+compatibility: Needs Node 22.20+ with Playwright and a browser installed in the site folder, a Blocofy site and its keys, network access; the blocofy MCP server or CLI. The optional legacy scan needs bash, Node 22.20+ and npx. Written for any Agent Skills client; tested in Claude Code.
 ---
 
 # Blocofy QA
@@ -8,12 +9,30 @@ description: Use when a change to a Blocofy site has to be verified in a rendere
 Nothing ships on "should work". Every claim of done is backed by a rendered
 page, a console count and a screenshot.
 
+## Terms
+
+- **Site folder**: the one folder that holds this site's `.env.local`,
+  `.blocofy-build/` and theme. Run every command from there; Playwright is
+  installed there (`npm i playwright && npx playwright install chromium`)
+  and the scripts resolve it from there.
+- **`<skill-dir>`**: the folder this SKILL.md was loaded from. Your agent shows
+  it when it loads the skill; if it does not, find it with
+  `find ~ . -maxdepth 6 -type d -name blocofy-qa -path '*skills*' 2>/dev/null | head -1`.
+  Scripts are always run through the interpreter:
+  `node <skill-dir>/scripts/….mjs`, `bash <skill-dir>/scripts/….sh`.
+- **Other skills** are named plainly ("load the `blocofy-platform` skill");
+  some agents show a prefix, for example `agency-kit:blocofy-platform` in
+  Claude Code.
+- **MCP tools**: "`site_readiness` (MCP)" means that tool of the MCP server
+  registered as `blocofy`; agents prefix tool names differently.
+
 ## The three verdict sources (in order of trust)
 
 1. **DOM queries via Playwright** — element presence, class states, computed
    styles, video `paused/currentTime`, ScrollTrigger progress.
 2. **Playwright screenshots** — full-size, inspected visually.
-3. In-app browser panes — convenience only; their screenshot pipeline can
+3. The agent's built-in browser pane or preview, where it has one —
+   convenience only; its screenshot pipeline can
    return blank frames on light-toned sections. Never fail a build on pane
    screenshots alone; re-verify with Playwright.
 
@@ -84,16 +103,19 @@ Read `.blocofy-build/design-dna.json` before the sweeps; it says what
   submission stores a record and sends an e-mail, so it needs the human's
   yes), video play/pause on enter/leave.
 - **Responsive sweep**: 390 / 768 / 1440 screenshots; no horizontal page scroll.
-- `scripts/verify-page.mjs [--expect "<text>"] <url>…` runs the page sweep
+- `node <skill-dir>/scripts/verify-page.mjs [--expect "<text>"] <url>…` runs
+  the page sweep
   for a list of per-page preview links or `theme dev` local URLs. A URL that
   times out or errors is reported as failed and the sweep goes on; the exit
   code is non-zero when any URL failed.
-- `scripts/reference-recon.mjs` records a reference site's structure, type,
+- `node <skill-dir>/scripts/reference-recon.mjs "<url>"…` records a reference
+  site's structure, type,
   colour and tech signals with screenshots (orchestrator Phase 1,
   `reference-recon.md`). It is a study aid, not a QA gate.
 - **Legacy-pattern sweep (optional, needs network)**:
-  `scripts/legacy-scan-liquid.sh <theme-dir> --json` runs the
-  `modern-web-guidance` scanner over the theme, Liquid included (the scanner
+  `bash <skill-dir>/scripts/legacy-scan-liquid.sh <theme-dir> --json` runs the
+  scanner of the `modern-web-guidance` npm package (fetched by `npx`; no
+  skill has to be installed) over the theme, Liquid included (the scanner
   skips `.liquid`, so the script scans a renamed temp copy). It covers only
   ~20% of that catalog, so zero findings is not a clean bill. Check every
   finding against its `keepWhen`/`dropWhen` rubric before acting — row
