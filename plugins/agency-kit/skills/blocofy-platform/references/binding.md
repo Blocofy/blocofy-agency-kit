@@ -4,7 +4,7 @@
 
 Bind a section setting to the routed entry:
 
-```json
+```text
 "settings": {
   "heading": { "$bind": "entry.title" },
   "image":   { "$bind": "entry.data.cover" },
@@ -58,7 +58,7 @@ adds a separate `media` object; `data` keeps the id.
 | `collection` | picker for a collection key |
 | `collectionField` + `dependsOn` | picker for a field of the chosen collection |
 | `form` | picker for a form key |
-| `richtext` | rich text, render with `{{ props.x }}` |
+| `richtext` | rich text; Liquid does not escape on its own, render with `{{ props.x \| sanitize_html }}` (theme kit `section-anatomy.md` lists the filter per field type) |
 | any + `"bindable": true` | allows `$bind` in dynamic pages |
 
 ## Collection CRUD traps

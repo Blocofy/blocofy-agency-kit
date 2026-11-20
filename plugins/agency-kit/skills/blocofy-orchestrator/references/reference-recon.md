@@ -11,8 +11,11 @@ From the tenant's `.blocofy-build/` directory (Playwright installed in the
 workspace):
 
 ```bash
-node <kit>/skills/blocofy-qa/scripts/reference-recon.mjs "<url>" "<inner-page-url>"
+node <blocofy-qa dir>/scripts/reference-recon.mjs "<url>" "<inner-page-url>"
 ```
+
+`<blocofy-qa dir>` is the base directory Claude Code shows when it loads the
+`blocofy-qa` skill.
 
 Give it the home page and one or two inner pages the client named. It writes
 `reference/recon.json` and full-page screenshots at 1440 and 390 into

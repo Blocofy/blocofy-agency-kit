@@ -16,7 +16,7 @@ your own workspace.
 | Playwright with a browser | page checks and reference recon | `npm i playwright && npx playwright install chromium` in the workspace |
 | `gsap-skills` plugin | motion guidance the theme skill calls by name | installed in the next section |
 | An image-generation connector (optional, paid) | only if you want generated images or video; the media skill is written for the Freepik/Magnific connector | your Claude connectors |
-| `modern-web-guidance` plugin (optional) | the QA legacy-pattern sweep | `claude plugin marketplace add GoogleChrome/modern-web-guidance && claude plugin install modern-web-guidance@googlechrome` (Node 22+) |
+| Node 22+ and network access (optional) | the QA legacy-pattern sweep, which runs the `modern-web-guidance` package through `npx` | nothing to install; the `modern-web-guidance` Claude Code plugin is a separate, optional companion: `claude plugin marketplace add GoogleChrome/modern-web-guidance && claude plugin install modern-web-guidance@googlechrome` |
 
 Nothing else is required. The concept phase and the reference-site recon run
 on the kit alone.
@@ -92,6 +92,8 @@ https://docs.blocofy.com (in Turkish).
    BLOCOFY_API_TOKEN=...                      # the API key
    BLOCOFY_CLI_TOKEN=...                      # the CLI token
    BLOCOFY_TOKEN=...                          # the CLI token again: the CLI itself reads this name
+   BLOCOFY_API_KEY=...                        # the API key again: the CLI reads this name
+   BLOCOFY_API_URL=https://app.blocofy.com
    ```
 
    With these in place the CLI needs no separate login. Load the file into
@@ -164,9 +166,11 @@ first two files yourself.
 
 ```
 <site folder>/
-├── .env.local          # gitignored: BLOCOFY_URL, BLOCOFY_API_TOKEN, BLOCOFY_CLI_TOKEN, BLOCOFY_TOKEN
+├── .env.local          # gitignored: the six BLOCOFY_* values from "Connect a site"
 ├── .mcp.json           # "Authorization": "Bearer ${BLOCOFY_API_TOKEN}" — never a literal token
-├── .blocofy-build/     # STATE.md, design-dna.json, content-model.json, NOTES.md
+├── .blocofy-build/     # STATE.md, brief.md, design-dna.json, content-model.json,
+│   │                   # media-registry.json, credits.md, NOTES.md
+│   ├── concept/        # direction board, coverage matrix
 │   └── session/        # short-lived preview links; add .blocofy-build/session/ to .gitignore
 ├── theme/              # blocofy CLI push source
 └── content/            # page documents, media briefs

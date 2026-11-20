@@ -31,5 +31,8 @@ or `python3 -c …` for extraction.
   invalid field types are rejected loudly, never silently coerced.
 - Conflicts: `409` (duplicate slug+locale, live-theme writes without
   `allow_live`, deleting non-empty collections).
-- Intermittent `502/504` on create/publish under load — wrap batch operations
-  in a retry (2–3 attempts, short backoff).
+- Intermittent `502/504` under load: for requests that are safe to repeat
+  (reads, updates of a known record), retry 2–3 times with a short backoff.
+  A create is different: the first request may have succeeded. After a
+  failed create, list or read first and repeat it only if nothing was
+  created. `POST /media` is never retried blind (`media.md`).

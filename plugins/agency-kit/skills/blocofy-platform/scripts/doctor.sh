@@ -16,6 +16,11 @@ fi
 for v in BLOCOFY_URL BLOCOFY_CLI_TOKEN BLOCOFY_API_TOKEN; do
   if [ -z "${!v:-}" ]; then say "✗ $v missing"; fail=1; else say "✓ $v set"; fi
 done
+# The CLI reads these names for theme-work commands; without them a CLI push
+# into a work is refused. MCP-only work does not need them.
+for v in BLOCOFY_API_KEY BLOCOFY_API_URL; do
+  [ -n "${!v:-}" ] && say "✓ $v set" || say "⚠ $v not set (needed for CLI theme-work commands; see the kit README)"
+done
 
 if command -v blocofy >/dev/null; then
   say "✓ blocofy CLI: $(blocofy --version 2>/dev/null | head -1 || echo present)"
@@ -39,8 +44,18 @@ if [ -n "${BLOCOFY_API_TOKEN:-}" ]; then
   fi
 fi
 
-if [ -n "${BLOCOFY_URL:-}" ] && [ -n "${BLOCOFY_CLI_TOKEN:-}" ]; then
-  BLOCOFY_TOKEN=$BLOCOFY_CLI_TOKEN blocofy status 2>/dev/null | head -2 || { say "✗ blocofy status failed"; fail=1; }
+# The CLI reads BLOCOFY_TOKEN. If it is unset or differs, the CLI falls back to
+# its saved credentials, which may belong to another site.
+if [ -n "${BLOCOFY_CLI_TOKEN:-}" ] && [ "${BLOCOFY_TOKEN:-}" != "${BLOCOFY_CLI_TOKEN}" ]; then
+  say "✗ BLOCOFY_TOKEN is unset or differs from BLOCOFY_CLI_TOKEN (the CLI reads BLOCOFY_TOKEN)"; fail=1
+fi
+
+if [ -n "${BLOCOFY_URL:-}" ] && [ -n "${BLOCOFY_CLI_TOKEN:-}" ] && command -v blocofy >/dev/null; then
+  if status_out=$(BLOCOFY_TOKEN=$BLOCOFY_CLI_TOKEN blocofy status 2>/dev/null); then
+    printf '%s\n' "$status_out" | sed -n '1,2p'
+  else
+    say "✗ blocofy status failed"; fail=1
+  fi
 fi
 
 # warn if .mcp.json carries a literal token

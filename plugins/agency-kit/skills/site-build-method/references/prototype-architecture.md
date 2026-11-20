@@ -25,6 +25,10 @@ scripts/              build.mjs · check.mjs · shoot.mjs · qa-interactions.mjs
 docs/                 research/ · specs/ · plans/ · qa/
 ```
 
+`scripts/` altındaki dosyalar projeye aittir; kit bunları taşımaz. Proje, aşağıda
+anlatılan işi yapan kendi scriptlerini yazar (kapı kanıtları ve yedekleri
+`quality-gates.md`'de).
+
 CSS dosyaları alan bazlı bölünür (ana sayfa, koleksiyon sayfaları, iç sayfalar); taşımada
 tek `theme.css`'e birleştirilir.
 
@@ -72,9 +76,10 @@ Koleksiyona özgü yardımcılar (sayım, ilişki çözme) projede tanımlanır,
 ## Motion kuralları
 
 - Kütüphane ve sürüm plan'da sabitlenir (ör. GSAP + ScrollTrigger + Lenis).
-- Yalnız `transform` ve `opacity`. Pin bütçesi sayfa başına sınırlı, mobilde 0.
+- Yalnız `transform` ve `opacity` (Blocofy tema kitinde tek istisna `motion.intensity: high`; `motion-adapter.md`). Pin bütçesi sayfa başına sınırlı, mobilde 0.
 - Reduced-motion: kapatma değil alternatif senaryo (fade, sayaçlar son değerde).
-- İçerik CSS ile gizlenmez; başlangıç durumunu JS verir. JS ya da CDN düşerse perde/emniyet zamanlayıcısı içeriği açar.
+- İçerik CSS ile gizlenmez; başlangıç durumunu JS verir. JS ya da CDN düşerse perde/emniyet zamanlayıcısı içeriği açar. Tema adapter'ı giriş durumunu yalnız JS'in eklediği ve bir emniyet mekanizmasının kaldırdığı bir sınıfın arkasında gizleyebilir (`blocofy-theme-kit` `references/motion-adapter.md` ve `references/a11y-nojs.md`); bu, prototip kuralını gevşetmez.
+- Kanca adları tema iskeletiyle aynıdır: `data-reveal`, `data-count` (`contracts.md` dom-contract).
 - Video: sayfa yüklendikten sonra bağlanır; reduced-motion / veri tasarrufu / autoplay reddinde poster kalır.
 
 ## Formlar
@@ -83,7 +88,7 @@ Prototipte form, `data-endpoint` varsa oraya `FormData` gönderir, yoksa gönder
 yazar. Honeypot alanı, istemci doğrulaması, başarı/hata durumları prototipte biter; platform
 fazında yalnız endpoint bağlanır.
 
-## QA araçları
+## QA araçları (proje scriptleri; kitte yok)
 
 - `shoot.mjs`: sayfa + genişlik → ekran görüntüsü + konsol + gizli reveal sayımı.
 - `qa-interactions.mjs`: menü, mega menü, dil, form modları, no-JS.

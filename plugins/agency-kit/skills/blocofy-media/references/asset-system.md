@@ -57,7 +57,8 @@ states both.
 
 ## People
 
-Read `families[].people`. The default is no identifiable people. Generated
+Read `families[].people`. The default is generic figures or
+silhouettes, no identifiable people. Generated
 images never stand in for the client's real team, premises or customers,
 whatever the family says.
 

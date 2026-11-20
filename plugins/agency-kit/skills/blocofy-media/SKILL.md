@@ -1,6 +1,6 @@
 ---
 name: blocofy-media
-description: AI media discipline for Blocofy sites using the Freepik/Magnific MCP - model selection matrix, no-text prompt rule, reference-guided generation from client screenshots, video generation, cost checks and MIME-correct upload into the Blocofy media library. Use when generating or replacing site imagery/video. TR triggers - gorsel uret, video uret, medya, kapak gorseli, arka plan.
+description: Use when generating, replacing or extending images or video for a Blocofy site, planning an image set or series (objects, scenes, covers), choosing an image or video model, or uploading generated media to the Blocofy media library. TR triggers - görsel üret, video üret, medya, kapak görseli, arka plan, görsel seti (gorsel uret, video uret, kapak gorseli).
 ---
 
 # Blocofy Media Pipeline
@@ -35,15 +35,23 @@ anything that could ship; never leave generation-service URLs in documents.
    holds for that kind of material for the rest of the project.
 4. **Self-host everything**: download the result, upload to Blocofy media
    (platform `references/media.md` — MIME flag mandatory), use the tenant CDN URL.
-5. **Truthfulness**: portfolio/case imagery may be stylized, but never invent
-   metrics, awards or client attributions inside images or captions.
+5. **Truthfulness**: a generated image never stands in for something that
+   exists: the client's products or packaging, team, premises, certificates,
+   logos, finished projects. Those are the client's own photographs or stay
+   out. Generated imagery is for atmosphere, illustration and abstraction,
+   and never carries invented metrics, awards or client names.
 
-## Model matrix (verified 2026-07; re-check `*_models_list` quarterly)
+## Model matrix (a dated starting point)
+
+Model names and rankings change. Before the first round of every project,
+read the tool's own lists (`images_models_list`, `video_models_list`) and
+prefer what they recommend; treat the table as what worked when it was
+written (2026-07).
 
 | Need | Model | Notes |
 |---|---|---|
 | Photoreal scene, no text | `recraft-v4-1` | Best pure TTI; append the no-text clause (below) |
-| Reference-guided image (screenshots, product shots) | `imagen-nano-banana-2-flash` | Fast, good composition; upload refs first |
+| Reference-guided image (the client's screenshots or photos as references for a new scene) | `imagen-nano-banana-2-flash` | Fast, good composition; upload refs first |
 | Highest-fidelity reference/brand work | `imagen-nano-banana-2` | When flash quality isn't enough |
 | Diagrams/UI-like/typography-bearing images | `gpt-2` | Only model trusted with readable text |
 | Video (background loops, product shots) | `bytedance-seedance-mini-2.0` | 720p/8s sweet spot; `pro` for finals; `cameraMotion: "static"` for textures |
@@ -55,12 +63,11 @@ end the prompt with: *"Absolutely no text, no letters, no words, no logos, no
 watermarks anywhere in the image."* Inspect every result at full size before
 using it — regenerate on any lettering.
 
-**Moderation false positives (video):** innocuous phrasings can be blocked
-(e.g. droplet macro prompts). Rephrase with more abstract vocabulary
-("translucent circles drifting over frosted surface") and retry once before
-escalating.
+**A harmless prompt is blocked (video):** describe the same harmless scene
+once in plainer words. If it is blocked again, stop and tell the human. Never
+reword a prompt to get content past a refusal the service makes on purpose.
 
-## Reference-guided flow (client site/product shots as refs)
+## Reference-guided flow (the client's own material as references)
 
 1. Capture references yourself (Playwright screenshot of the client's site,
    crop consent banners) or receive client assets. Ground rule 3 applies
@@ -69,7 +76,9 @@ escalating.
    never re-PUT the same URL) → `creations_finalize_upload` → use returned
    identifiers in `references: [{type:"image", identifier}]`.
 3. Prompt describes the *new scene* and how the reference participates
-   ("the client's product, as in the reference, on the desk of the new scene…").
+   ("the colours and materials of the reference, in a new abstract scene…").
+   The output is atmosphere; it is never shown as the client's actual product,
+   place or people (ground rule 5).
 
 ## References
 

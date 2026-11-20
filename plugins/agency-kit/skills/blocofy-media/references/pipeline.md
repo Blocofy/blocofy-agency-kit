@@ -3,7 +3,8 @@
 1. **Plan the set list** per family (`asset-system.md`): one line per asset,
    derived from what its page, service or article says. Note family, ratio +
    model per item (model-matrix.md).
-2. **Credits**: `account_balance`; report if unlimited is inactive.
+2. **Spend gate** (`SKILL.md` ground rule 2): balance, the list, estimated
+   cost; wait for the human's yes before step 3.
 3. **Generate** in parallel `images_generate` calls (count=1 each, distinct
    prompts). Reference-guided items first upload refs:
    `creations_request_upload(mimeType, count)` → `curl -X PUT -H "Content-Type: <mime>" --data-binary @file "<proxyUploadUrl>"` → `creations_finalize_upload(uploads:[{path}…])`.

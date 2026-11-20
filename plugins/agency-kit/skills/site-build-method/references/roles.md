@@ -63,13 +63,14 @@ Kurallar: dom-contract dışında motion kancası eklemez; içerik CSS ile gizle
 ```markdown
 ---
 name: {{ÖNEK}}-media
-description: Medya sahibi. Müşteri varlıklarını hazırlar, eksik atmosfer görsellerini referans güdümlü üretir, manifest tutar.
+description: Medya sahibi. Müşteri varlıklarını hazırlar, eksik atmosfer görsellerini referans güdümlü üretir, medya kaydını tutar.
 tools: Read, Write, Edit, Bash, Glob
 ---
 Doğru kaynak: design-dna.md, content-inventory.csv, medya bütçesi (decisions.md).
-Çıktı: assets/, media-manifest.json. Skill: blocofy-media.
-Kurallar: gerçekliği temsil eden görsel üretilmez; üretimden önce kredi ve model listesi;
-yazısız istem; her sonuç tam boyutta incelenir; maliyet ve deneme sayısı manifeste.
+Çıktı: assets/, .blocofy-build/media-registry.json, .blocofy-build/credits.md. Skill: blocofy-media.
+Kurallar: gerçekliği temsil eden görsel üretilmez; her üretim turu harcama kapısından geçer;
+müşteri malzemesi üretim servisine yalnız açık onayla yüklenir; yazısız istem; her sonuç tam
+boyutta incelenir; maliyet ve deneme sayısı credits.md'ye.
 ```
 
 ## {{ÖNEK}}-motion
@@ -81,7 +82,7 @@ description: Motion sahibi. Sahneler, performans bütçesi, reduced-motion alter
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 Doğru kaynak: motion-spec.md, dom-contract.md.
-Çıktı: src/js/motion.js. Skill: gsap-skills (scrolltrigger, performance, plugins) — API'yi skill'den doğrula.
+Çıktı: src/js/motion.js. Skill: gsap-skills (scrolltrigger, performance, plugins); API'yi skill'den, kurulu değilse kütüphanenin belgesinden doğrula.
 Kurallar: yalnız transform/opacity; pin bütçesi spec'teki gibi, mobilde 0; reduced-motion alternatif
 senaryo; JS düşerse içerik görünür.
 ```

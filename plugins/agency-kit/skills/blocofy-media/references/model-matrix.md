@@ -1,6 +1,7 @@
 # Extended model notes
 
-Re-verify with `images_models_list` / `video_models_list` quarterly; prefer
+Dated notes (2026-07). Re-verify with `images_models_list` /
+`video_models_list` before the first round of every project; prefer
 entries with `agentRecommendation.tier: sota`, lowest rank.
 
 ## Images
@@ -9,7 +10,7 @@ entries with `agentRecommendation.tier: sota`, lowest rank.
   iteration. No image references (style refs only). The workhorse for scene
   backgrounds. Aspect ratios include 16:9, 2:1, 4:3.
 - `imagen-nano-banana-2-flash` ("Nano Banana Lite") — reference-guided
-  composition: pass site screenshots/product photos as `type:"image"`
+  composition: pass the client's screenshots or photos as `type:"image"`
   references. Good for "their real website on a screen in a styled scene".
 - `imagen-nano-banana-2` (Pro) — same family, higher fidelity, slower;
   brand-consistency finals.
@@ -37,6 +38,7 @@ entries with `agentRecommendation.tier: sota`, lowest rank.
 
 ## Cost discipline
 
+- Every round starts at the spend gate (`SKILL.md` ground rule 2).
 - `account_balance` before batches; `simulate_cost` for video when its
   argument schema cooperates — otherwise estimate: mini-video ≈ several
   thousand credits, images ≈ tens-to-hundreds each.

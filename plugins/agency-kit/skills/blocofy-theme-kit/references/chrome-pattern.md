@@ -25,7 +25,7 @@ partial fallback below.
 ```html
 <script>
 (function () {
-  ['.xy-topbar', '.xy-footer'].forEach(function (sel) {
+  ['.xy-header', '.xy-footer'].forEach(function (sel) {
     document.querySelectorAll(sel).forEach(function (el, i) { if (i > 0) el.remove(); });
   });
 })();
@@ -33,6 +33,9 @@ partial fallback below.
 ```
 
 The first matching element wins, so a stray duplicate never shows twice.
+The selectors must match the markup: the root element of the header body
+carries the class `xy-header`, the footer's `xy-footer` (with your prefix).
+If you name them differently, change the guard too.
 
 ## Fallback: empty group → `partial/header` / `partial/footer`
 
@@ -61,6 +64,6 @@ section/XyHeader.liquid         ← {% render 'partial/xy-header-body', menu_han
 ## Layout contract
 
 `layout/theme.liquid` must render `{{ header_html }}`, `{{ content_html }}`,
-`{{ footer_html }}`, include the skip-link, fonts, token block
+`{{ footer_html }}`, include the skip-link, the font preload, token block
 (`:root{ {{ theme_css }} }`), CSS via `{% render 'asset/theme.css' %}` and the
 dedupe guard before vendor scripts.

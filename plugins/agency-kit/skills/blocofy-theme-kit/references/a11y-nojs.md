@@ -7,16 +7,20 @@ Hard gates — a section that fails any of these is not done.
 - Single source of truth: `prefers-reduced-motion`. Handle it twice:
   - CSS: `@media (prefers-reduced-motion: reduce)` neutralizes decorative
     transforms/animations.
-  - JS: `gsap.matchMedia()` branch that reveals everything instantly and sets
-    counters to final values (see motion-adapter).
+  - JS: under reduced motion the head script never arms motion, so nothing is
+    hidden and counters keep their server-rendered final text; a
+    `gsap.matchMedia()` branch handles a switch while the page is open
+    (see motion-adapter).
 - Smooth scroll (Lenis) is not initialized under reduced motion.
 - Test with Playwright `page.emulateMedia({ reducedMotion: 'reduce' })`:
   zero hidden `[data-reveal]`, all counters final, no console errors.
 
 ## No-JS
 
-- `document.documentElement.classList.add('js')` in `<head>`; all "hidden until
-  animated" styles are scoped under `.js` so content is fully visible without JS.
+- An inline `<head>` script adds `.xy-motion` to `<html>`; all "hidden until
+  animated" styles are scoped under it, so content is fully visible without
+  JS. The same script removes the class after 2.5 s if `app.js` has not
+  signalled (motion-adapter.md § Hidden-state failsafe).
 - Accordions prefer native `<details>/<summary>`; custom toggles need a
   sensible default-open state without JS.
 - Forms must be plain HTML `method="post" action=…` capable — fetch submit is
@@ -48,7 +52,11 @@ that is not Baseline Widely available needs its documented fallback.
 
 ## Baseline a11y
 
-- Skip link to `#main`; semantic landmarks (`header/main/footer/nav[aria-label]`).
+- Skip link to `#main`, its text in the site's language: the skeleton prints
+  the theme setting `settings.skip_link_label` (declare it as a `text` field
+  in `config/settings_schema.json`; on a multilingual site the platform
+  resolves a theme setting to the active language) with an English default.
+  Semantic landmarks (`header/main/footer/nav[aria-label]`).
 - One `h1` per page; heading levels don't skip.
 - Body text contrast AA (4.5:1). Accent-colored text only at large sizes, and
   the on-accent text color is a token (css-tokens.md).

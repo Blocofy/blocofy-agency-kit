@@ -10,11 +10,16 @@ set -euo pipefail
 METHOD=${1:?method}; PATHQ=${2:?path}; BODY=${3:-}
 
 # Writes with no preview on the platform (references/live-writes.md). The path
-# alone cannot tell a published entry from a draft one, so entry and schema
-# writes are covered by the rule in the skill, not by this guard.
+# alone cannot tell a published entry from a draft one, so entry, schema,
+# form, live-page field and release writes are covered by the rule in the
+# skill, not by this guard. The guard is a reminder, not the protection.
 guard=""
 case "$METHOD" in
-  DELETE) guard="a delete" ;;
+  DELETE)
+    case "$PATHQ" in
+      */preview-links/*) ;;            # ends a link this session created
+      *) guard="a delete" ;;
+    esac ;;
   POST|PUT|PATCH)
     case "$PATHQ" in
       */publish*|*/unpublish*) guard="a publish-state change" ;;
@@ -31,7 +36,9 @@ if [ -n "$guard" ] && [ "${LIVE_WRITE_OK:-}" != "1" ]; then
   exit 3
 fi
 
-args=(-s -X "$METHOD" "https://app.blocofy.com/api/v1${PATHQ}"
+# -sS: quiet but show transport errors. --fail-with-body: a 4xx/5xx still prints
+# the error JSON and makes the script exit non-zero.
+args=(-sS --fail-with-body -X "$METHOD" "https://app.blocofy.com/api/v1${PATHQ}"
       -H "Authorization: Bearer $BLOCOFY_API_TOKEN")
 if [ -n "$BODY" ]; then
   args+=(-H "Content-Type: application/json" --data-binary "$BODY")

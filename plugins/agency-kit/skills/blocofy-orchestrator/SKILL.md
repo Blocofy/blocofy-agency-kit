@@ -1,6 +1,6 @@
 ---
 name: blocofy-orchestrator
-description: Phase-machine conductor for building a complete creative corporate website on Blocofy CMS from scratch - routes each phase to the right skill by name (blocofy-theme-kit, blocofy-media, blocofy-qa, gsap-skills), maintains build state in .blocofy-build/STATE.md and validates artifact contracts at phase exits. Use when starting a new Blocofy site, continuing a site build, or when unsure which Blocofy skill applies. TR triggers - yeni site kur, sifirdan site, siteyi kurmaya devam, hangi adimdayiz.
+description: Use when starting a new website on Blocofy CMS, resuming a site build that has a .blocofy-build/STATE.md, choosing or revising a site's concept and design direction, or when unsure which Blocofy skill applies to a request. TR triggers - yeni site kur, sıfırdan site, siteyi kurmaya devam, hangi adımdayız, konsept seç, tasarım yönü (yeni site kur, sifirdan site, hangi adimdayiz).
 ---
 
 # Blocofy Site Orchestrator
@@ -32,7 +32,7 @@ route directly — do not bootstrap state for one-off work:
 | "verify / test / is it ready" | `blocofy-qa` |
 | scroll/motion depth | `gsap-skills` modules |
 | "analyze this reference site", "make it like this site" | `references/reference-recon.md` (study, never copy) |
-| new client site end-to-end, prototype-first route, "hangi fazdayız", prelaunch/handover | `site-build-method` (it hands Phases 8+ back here via `capture-map.md`) |
+| the human asks for the agency process around the build (static prototype first, written sign-off, prelaunch checklist, handover) | `site-build-method`. It runs its own phases 0–12 and calls this orchestrator for the Blocofy part (its phases 8–11 = phases 0–7 here). A plain "build this site on Blocofy" stays here |
 
 ## Theme provenance gate (before any theme work)
 
@@ -45,10 +45,10 @@ Decide the mode from evidence, in this order:
 2. No STATE.md, but `blocofy status` shows an agency-built theme (agency
    naming convention / prefixed sections) → **takeover mode**: pull THAT
    instance, retrofit STATE.md, then continue.
-3. Only the platform default exists → **greenfield mode**: start a NEW empty
-   theme from theme-kit `assets/skeleton/`, push with
-   `blocofy theme push <dir> --draft --name "<Theme Name>"`.
-   `theme pull` of the default is forbidden as a design base.
+3. Only the platform default exists → **greenfield mode**: build the theme
+   from theme-kit `assets/skeleton/` in a fresh local directory and push it
+   into a theme work (Phase 4). The default theme's files are never used as
+   the design base.
 
 Record the decision in STATE.md as `themeOrigin: skeleton | existing:<handle>`.
 
@@ -64,7 +64,7 @@ contract artifact) → verify exit gate → update STATE.md → report.
 | 1 | Brief & discovery | reference URL given → reference recon (`references/reference-recon.md`); else guided brief + research | `brief.md` | sitemap, audience, business lines, references written |
 | 2 | Concept / design DNA | specialist subagents → direction board → client pick → coverage matrix → capture step (`references/concept-process.md`) | `concept/directions.html`, `concept/coverage.md`, `design-dna.json` v2 (+ sync summary to server Site DNA) | client picked a direction they saw; coverage matrix complete; contract fields non-empty incl. signature element, `visual_language`, first `decisions[]` |
 | 3 | Content model | `blocofy-platform` (binding.md) | `content-model.json` | every planned section's data source resolved (collection/static/global) |
-| 4 | Theme build | `blocofy-theme-kit` (+`gsap-skills` for motion depth) | theme dir pushed to a **draft** instance | per-section checklist green; draft renders in preview |
+| 4 | Theme build | `blocofy-theme-kit` (+`gsap-skills` for motion depth) | theme dir pushed into a **theme work** | per-section checklist green; draft renders in preview |
 | 5 | Content & media | `blocofy-media` + `blocofy-platform` (pages-documents.md) | draft-instance pages + entries + media | zero placeholders; all media on tenant CDN |
 | 6 | QA | `blocofy-qa` | QA report in NOTES.md | page/responsive/reduced-motion sweeps green |
 | 7 | Publish & retro | `blocofy-platform` theme-work approval flow — **a person approves; the agent never publishes** | live site; retro notes | work `published`; post-publish smoke green; lessons promoted |
@@ -89,7 +89,8 @@ contract artifact) → verify exit gate → update STATE.md → report.
      menus, site settings, forms, live-page SEO and publish state, deletes):
      `blocofy-platform` `references/live-writes.md`.
   3. Any spend on generation, and any upload of the client's material to a
-     generation service: the spend gate in `blocofy-media`.
+     generation service: the spend gate in `blocofy-media`, which also says
+     what one yes covers (a listed round; a kind of client material).
   A general go-ahead given earlier does not replace these.
 - A visitor-facing experience (a section, a flow, a form, a new area) is
   shown as scenario + visual draft and picked by the client before it is

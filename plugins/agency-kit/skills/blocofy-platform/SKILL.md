@@ -1,6 +1,6 @@
 ---
 name: blocofy-platform
-description: How to operate the Blocofy CMS platform safely — auth/env conventions, the operation→channel matrix (MCP vs blocofy CLI vs curl REST), page/document/theme/media API recipes, the theme-work approval flow for theme changes and known traps. Use whenever touching a Blocofy tenant (tema push, tema çalışması, sayfa belgesi, medya yükleme, taslak/canlı tema, preview, publish, koleksiyon/kayıt CRUD). TR triggers - Blocofy, tema, taslak, yayınla, sayfa belgesi, medya yükle.
+description: Use whenever touching a Blocofy site through its MCP tools, CLI or REST API - before any write, when choosing between them, when a call is refused, and when deciding whether a change needs a person's approval (tema push, tema çalışması, sayfa belgesi, medya yükleme, taslak/canlı tema, preview, publish, koleksiyon/kayıt CRUD). TR triggers - Blocofy, tema, taslak, yayınla, sayfa belgesi, medya yükle.
 ---
 
 # Blocofy Platform Operations
@@ -16,7 +16,7 @@ appearance, sections), small fixes included.
 
 | Situation | Do |
 |---|---|
-| Any theme change | 1. `list_theme_works` (MCP). 2. Resume a matching open work (`resume_theme_work`) or start one (`start_theme_work` with an idempotency key); never pick a work by name. 3. Write into the work: MCP write tools, or `blocofy theme push <dir> --draft --work <wk_…>`. 4. Give the user the work's preview link (`POST /api/v1/theme-work/{handle}/preview-links`). 5. `request_publish_approval` (MCP) or `blocofy theme work request-approval <wk_…> --open --wait`; give the user the approval link. 6. Say "live" only after the work is `published`. |
+| Any theme change | 1. `list_theme_works` (MCP). 2. Resume a matching open work (`resume_theme_work`) or start one (`start_theme_work` with an idempotency key, or `blocofy theme work start` when the files will be pushed with the CLI: the work belongs to the credential that starts it); never pick a work by name. 3. Write into the work: MCP write tools, or `blocofy theme push <dir> --draft --work <wk_…>`. 4. Give the user the work's preview link (`POST /api/v1/theme-work/{handle}/preview-links`). 5. `request_publish_approval` (MCP) or `blocofy theme work request-approval <wk_…> --open --wait`; give the user the approval link. 6. Say "live" only after the work is `published`. |
 | Small fix (one file, one setting) | Same flow. There is no shortcut. |
 | `work_stale` | Start a new work and re-apply the change. Never force the old one. |
 | User, after seeing the preview, says to put it live | `request_publish_approval` (or `blocofy theme work request-approval <wk_…> --open --wait`) and give them the approval link; one click puts the work live. Never use the direct-live tools for this. |
@@ -38,13 +38,20 @@ All tenant values come from the workspace — never hardcode them:
 ```bash
 # tenants/<domain>/.env.local  (gitignored)
 BLOCOFY_URL=…            # tenant site URL
-BLOCOFY_CLI_TOKEN=…      # bcf_… (CLI dev token)
-BLOCOFY_API_TOKEN=…      # blcf_… (Admin REST bearer)
+BLOCOFY_CLI_TOKEN=…      # bcf_… / bcf2_… (CLI token)
+BLOCOFY_TOKEN=…          # same value; the name the CLI reads for theme files
+BLOCOFY_API_TOKEN=…      # blcf_… (API key; used by MCP, api.sh, doctor.sh)
+BLOCOFY_API_KEY=…        # same value; the name the CLI reads for theme works
+BLOCOFY_API_URL=https://app.blocofy.com
 ```
 
 - CLI needs `export BLOCOFY_URL=… BLOCOFY_TOKEN=$BLOCOFY_CLI_TOKEN` — otherwise
   it uses `~/.blocofy/credentials.json`, which may point at a **different tenant**.
   Always confirm the target with `blocofy status` before writing anything.
+- A theme work belongs to the credential that started it. Start it and write
+  to it through the same key: a work started over MCP is written over MCP
+  (or by the CLI holding that same API key in `BLOCOFY_API_KEY`); a CLI push
+  into a work needs both the CLI token and the API key of the same site.
 - Admin REST base: `https://app.blocofy.com/api/v1`, `Authorization: Bearer $BLOCOFY_API_TOKEN`.
 - `.mcp.json` must use `"Bearer ${BLOCOFY_API_TOKEN}"` env expansion — never a literal token.
 - Run `scripts/doctor.sh` at the start of a build (Phase 0 gate).
@@ -57,8 +64,9 @@ Pick per operation; verify dates show when a row was last confirmed.
 | Operation | Channel | Why / trap | Verified |
 |---|---|---|---|
 | Read docs, site DNA, status, readiness | MCP | read-only, reliable | 2026-07 |
+| Site DNA update | MCP | `update_site_dna`. A record that is not empty is a write with no preview → `references/live-writes.md` | 2026-11 |
 | Theme files push/pull/dev | CLI | draft-safe by default; `--instance <handle>` targets a specific draft; write into a theme work with `--draft --work <wk_…>` (see the table above); going live is the approval flow, not `theme publish`. `theme rename <handle> <name>` renames | 2026-11 |
-| Draft preview link | REST / MCP | `POST /themes/<theme handle>/preview-links {"page": "<page handle>"}` (MCP `create_preview_link`: `instance`, `page`, `ttl_seconds`); CLI signed preview is retired → §3 | 2026-10-31 |
+| Draft preview link | REST / MCP | for a theme work `POST /theme-work/<wk handle>/preview-links`; for a draft theme outside a work `POST /themes/<theme handle>/preview-links {"page": "<page handle>"}` (MCP `create_preview_link`: `instance`, `page`, `ttl_seconds`); CLI signed preview is retired → §3 | 2026-10-31 |
 | Page **document** create/update | **REST only** | MCP `document` param is schema-less → client stringifies → server rejects. PATCH `{"document": …}` **alone**; bundling other fields can silently skip the draft revision | 2026-07 |
 | Page publish / delete(trash) | REST | `POST /pages/{id}/publish`; body optional (`published_at`, `unpublish_at`). In the live theme this is a live write → `references/live-writes.md` | 2026-07 |
 | Chrome (header/footer) add/update/delete | REST | `POST /themes/{id}/chrome` with `position: 0` prepends; MCP appends at the end. `PATCH`/`DELETE …/chrome/{group}/{sectionId}` per docs (2026-09-23), not yet exercised. POST failed for a blockless section (422 no `blocks`, 500 `blocks: []`, REST+MCP) → `partial/header|footer` fallback, see theme-kit chrome pattern | 2026-10-31 |
@@ -72,7 +80,10 @@ pages with urllib is fine.
 
 ## 2. Core model (why drafts are safe)
 
-- A site has one **live** theme instance and up to 5 **drafts**. Creating a
+- A site has one **live** theme instance and a limited number of drafts (a
+  count on some sites, a storage allowance on others; the refusal names the
+  limit, for example `quota_exceeded`. Do not retry it: tell the human, who
+  decides what to delete). Creating a
   draft also clones the page set; **pages are bound to a theme instance**
   (`theme_instance` on the page, not PATCHable).
 - Renderer serves only pages whose instance == live pointer. So: publishing
@@ -99,12 +110,19 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
   (gitignored). Navigating to another route from it shows live content.
 - After expiry or revoke the link **silently serves live content** — check
   link age before debugging "my changes vanished".
-- The link **pins the draft's theme files (docs) and theme settings
-  (observed 2026-10-31) at creation**: after any `theme push` or theme-settings
-  change (logo, colors, contact info), generate a new link; the old one keeps
-  showing the old state.
+- A link shows the theme files and theme settings as they were when a link
+  for that theme was last created. After any `theme push` or theme-settings
+  change, create one new link: per the platform docs that also brings the
+  theme's older links up to date. Page content is read fresh on every open.
 - Key needs `themes:write` + `pages:read`. No link for a theme with files still
   in draft state, or for dynamic template pages; max 50 active links per site.
+- A theme work has its own preview links
+  (`POST /theme-work/<wk handle>/preview-links`); the `/themes/<handle>/…`
+  form above is for a draft theme outside a work.
+- **Dynamic template pages** (collection detail routes): run
+  `blocofy theme dev <dir>`. It serves your local files with the draft's
+  saved content on `127.0.0.1`, collection detail pages included. It never
+  shows the live site and forms are not submitted from it.
 - Collection lists on a link show only **published** entries (draft/scheduled
   entries appear only in the editor preview). While the site itself is in
   draft or maintenance status, links don't show the draft.
@@ -113,7 +131,7 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
 
 | File | Content |
 |---|---|
-| `references/auth-tokens.md` | env layering, CLI credentials, token rotation, preview-token lifecycle |
+| `references/auth-tokens.md` | env layering, CLI credentials, token rotation, preview-link lifecycle |
 | `references/api-transport.md` | curl conventions, Cloudflare notes, `scripts/api.sh` usage |
 | `references/pages-documents.md` | PageDocument v2 shape, document-PATCH-alone rule, publish/trash lifecycle |
 | `references/themes-instances.md` | draft/live model, instance-page binding, chrome endpoints, publish flow |
@@ -124,4 +142,4 @@ api.sh POST /themes/<theme handle>/preview-links '{"page": "<page handle>"}' | j
 ## 5. Scripts
 
 - `scripts/doctor.sh` — validates env vars, CLI presence and API reachability; run as Phase 0 gate.
-- `scripts/api.sh` — thin curl wrapper: `api.sh GET "/pages?limit=5"`, `api.sh PATCH "/pages/<id>" @doc.json`. It refuses DELETE, page publish, site-settings and menu writes unless `LIVE_WRITE_OK=1` is set for that one call; set it only after the human's yes (`references/live-writes.md`).
+- `scripts/api.sh` — thin curl wrapper: `api.sh GET "/pages?limit=5"`, `api.sh PATCH "/pages/<id>" @doc.json`. It refuses DELETE, page publish, site-settings and menu writes unless `LIVE_WRITE_OK=1` is set for that one call; set it only after the human's yes, or for the two cases `references/live-writes.md` lists as needing no stop (publishing a page of a draft theme, revoking a preview link).

@@ -4,6 +4,15 @@ Common frame per phase: read input artifacts fresh from disk → invoke the
 named skill(s) → capture step → verify exit gate → update STATE.md →
 one-paragraph report to the human.
 
+## When `site-build-method` calls this orchestrator
+
+On the prototype-first route the method has already done discovery, concept
+and sign-off. Phases 1–3 here do not repeat them: write `brief.md`,
+`design-dna.json` and `content-model.json` from the method's `capture-map.md`,
+run each phase's gate on the result, and quote the client's pick from the
+method's sign-off file in `decisions[0]`. The direction board is not rebuilt.
+Phases 0 and 4–7 run as written.
+
 ## Phase 0 — Bootstrap
 
 - `cd` tenant workspace; run platform `scripts/doctor.sh` (env, CLI, API).
@@ -72,7 +81,8 @@ should be "like" an approved one follows `concept-process.md` → New area.
 ## Phase 3 — Content model
 
 - From brief + DNA section sketch, decide each section's data source:
-  static settings, a collection (with `field_schema`), a form, or globals.
+  static settings, a collection (the contract's `fields`, sent to the
+  platform as `field_schema`), a form, or globals.
 - Design collections editor-first (labels, field types, content_page routes).
 - Write `content-model.json`; create/patch collections via platform recipes
   (full-schema replace rule!). A new collection is safe to create. Changing
@@ -82,18 +92,28 @@ should be "like" an approved one follows `concept-process.md` → New area.
 
 ## Phase 4 — Theme build
 
+- Every theme write goes into a **theme work** (`blocofy-platform` SKILL.md,
+  top table). Resume the work recorded in STATE.md, or start one and record
+  its handle (`wk_…`) there. A work starts as a private copy of the live
+  theme and is what the human approves in Phase 7.
 - Honor `themeOrigin` from STATE.md:
-  - `skeleton` → fresh dir from theme-kit skeleton; first push creates the
-    named draft; record the new handle in STATE.md.
-  - `existing:<handle>` → work in the recorded theme dir (pull that instance
-    if missing locally); push targeted with `--instance <handle>`.
+  - `skeleton` → fresh local dir from theme-kit skeleton, pushed into the
+    work with `blocofy theme push <dir> --draft --work <wk_…>`. Run it with
+    `--dry-run` first: it lists what is created, updated and left over from
+    the copied theme. Whether leftover files can be removed in the same push
+    (`--prune`) depends on the CLI version: read `blocofy theme push --help`,
+    try `--dry-run --prune`, and if it is refused leave them and note it in
+    NOTES.md.
+  - `existing:<handle>` → work in the recorded theme dir (pull that theme
+    if missing locally) and push into the work the same way.
 - Invoke `blocofy-theme-kit`: tokens from DNA → section vocabulary → chrome +
   aliases → motion pass (consult `gsap-skills`).
-- Push to a **draft** instance; verify through per-page preview links
-  (platform SKILL §3), regenerated after each push or settings change
-  (`theme dev` is local-only).
-- Gate: per-section checklist green on preview; zero unknown sections on the
-  draft's page routes.
+- Verify through preview links of the work (platform SKILL §3), regenerated
+  after each push or settings change. Collection detail pages have no
+  preview link: check them in `blocofy theme dev`, which serves the draft
+  locally.
+- Gate: per-section checklist green on preview (collection detail routes in
+  `theme dev`); zero unknown sections on the draft's page routes.
 
 ## Phase 5 — Content & media
 

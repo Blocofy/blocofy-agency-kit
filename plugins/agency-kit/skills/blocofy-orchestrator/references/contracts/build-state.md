@@ -9,7 +9,8 @@ contractVersion: 1
 updated: YYYY-MM-DD HH:MM
 
 ## Target
-- Draft theme instance: <handle or "not created">
+- Theme work: <wk_… or "not started">   ← every theme write goes into it
+- Draft theme instance: <handle of the work's theme, or "not created">
 - Theme dir: <path>
 - themeOrigin: skeleton | existing:<handle>   ← provenance gate decision
 
@@ -29,7 +30,7 @@ updated: YYYY-MM-DD HH:MM
 - …
 
 ## Session cache pointers (gitignored files, informational)
-- preview token: .blocofy-build/session/preview.json (check exp!)
+- preview links: .blocofy-build/session/ (check each link's expiry before trusting it)
 ```
 
 Rules: statuses only move forward via gate checks; "done" requires the gate

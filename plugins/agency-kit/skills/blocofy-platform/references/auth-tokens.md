@@ -11,11 +11,15 @@
 
 ## Token types
 
-- `bcf_…` — **CLI dev token** (`BLOCOFY_CLI_TOKEN`). Used by `blocofy` CLI as
-  `BLOCOFY_TOKEN`. Scope: theme dev/push/pull/publish for one site. Even when the token can
+- `bcf_…` (older) or `bcf2_…` (current, needs CLI 0.16+): **CLI token**
+  (`BLOCOFY_CLI_TOKEN`). Used by `blocofy` CLI as `BLOCOFY_TOKEN`. Scope: theme dev/push/pull/publish for one site. Even when the token can
   publish, an agent does not: theme changes go through a theme work and a
   person's approval (`SKILL.md`).
-- `blcf_live_…` — **Admin REST bearer** (`BLOCOFY_API_TOKEN`). Scoped per site
+- `blcf_live_…` (older) or `blcf_k2_…` (current): **API key**
+  (`BLOCOFY_API_TOKEN`; the CLI reads the same value as `BLOCOFY_API_KEY`
+  with `BLOCOFY_API_URL` for theme-work commands). A new key is created with
+  the "theme development" profile: it reads and works on drafts and cannot
+  publish; that is the profile an agent should hold. Scoped per site
   (pages, content, media, themes…). Never commit; never paste into `.mcp.json`
   as a literal — use `${BLOCOFY_API_TOKEN}` expansion. If a literal ever lands
   in a committed file, rotate the token in the admin panel.
@@ -40,5 +44,6 @@ blocofy status                  # ALWAYS verify tenant before any write
 - Expired or revoked links **silently render live content** — no error.
   Symptom: "preview lost my changes". Check `expires_at`
   (`list_preview_links`) first.
-- Links pin the draft's theme files and settings at creation → regenerate
-  after a push or settings change.
+- After a push or a theme-settings change, create one new link for that
+  theme; per the platform docs the theme's older links then show the new
+  state too (`SKILL.md` §3).

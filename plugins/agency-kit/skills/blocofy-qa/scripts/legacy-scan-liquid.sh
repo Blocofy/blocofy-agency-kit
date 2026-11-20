@@ -4,7 +4,9 @@
 # `modern-web-guidance legacy-scan` reads .css/.js/.html but skips .liquid, so
 # this copies the theme to a temp dir with every .liquid renamed to .html and
 # scans the copy. The theme itself is never modified.
-# Needs Node >= 22 and network access (npx fetches the scanner).
+# Needs Node >= 22 and network access (npx fetches the scanner, pinned to an
+# exact version). The scanner runs without the BLOCOFY_* variables: it has no
+# use for site tokens.
 # Reported paths are relative to the theme; read "x.html" as "x.liquid" when
 # no x.html exists in the theme.
 set -euo pipefail
@@ -30,5 +32,8 @@ while IFS= read -r -d '' f; do
   cp "$THEME/$f" "$dest"
 done
 
+UNSET=()
+while IFS= read -r v; do UNSET+=(-u "$v"); done < <(compgen -v | grep '^BLOCOFY_' || true)
+
 cd "$TMP"
-npx -y modern-web-guidance@latest legacy-scan . "$@"
+env ${UNSET[@]+"${UNSET[@]}"} npx -y modern-web-guidance@1.0.1 legacy-scan . "$@"

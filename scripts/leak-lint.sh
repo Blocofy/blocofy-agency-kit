@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.."
 PATTERNS='blcf_live_[A-Za-z0-9_-]{10,}|bcf_[A-Za-z0-9_-]{20,}|myblocofy\.com/cdn|pikaso\.cdnpk'
 LOCAL="scripts/leak-lint.local"
 if [ -f "$LOCAL" ]; then
-  EXTRA="$(grep -vE '^\s*(#|$)' "$LOCAL" | paste -sd'|' -)"
+  EXTRA="$(grep -vE '^\s*(#|$)' "$LOCAL" | paste -sd'|' - || true)"
   [ -n "$EXTRA" ] && PATTERNS="$PATTERNS|$EXTRA"
 fi
 if grep -rInE "$PATTERNS" --exclude-dir=.git --exclude=.git --exclude="leak-lint.sh" --exclude="leak-lint.local" .; then

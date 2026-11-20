@@ -2,7 +2,7 @@
 
 ## Model
 
-- One **live** instance + up to 5 **drafts** per site. Theme settings, chrome
+- One **live** instance + a limited number of drafts per site (see SKILL.md §2). Theme settings, chrome
   layouts and the page set are all **per instance**.
 - Creating a draft clones the current pages into draft-owned copies. The
   renderer resolves `theme_instance == live_theme_instance` — so anything you
@@ -16,31 +16,36 @@
 New sites ship with a platform default theme. `theme pull` exists to sync a
 theme **we already own** — pulling the default and iterating on it anchors the
 design to the default's structure and is the most common recurring mistake.
-For any new creative build, start from the theme-kit skeleton and create a
-fresh named draft; the orchestrator's provenance gate
+For any new creative build, start from the theme-kit skeleton and push it
+into a theme work; the orchestrator's provenance gate
 (continue / takeover / greenfield) decides which mode applies.
 
 ## Build flow (safe default)
 
 ```bash
-blocofy theme push <dir> --draft --name "Theme Name"   # first push creates the draft
-blocofy theme push <dir> --instance <handle>           # subsequent targeted pushes
-blocofy theme dev <dir> --port 3030                    # local render + auto-sync (no preview URL)
-blocofy theme rename <handle> "Display Name"           # rename an instance
+blocofy theme work start <dir> --intent "<what this work is for>"   # prints wk_…; saved in .blocofy/local.json
+blocofy theme push <dir> --draft --work <wk_…> --dry-run          # what would change, nothing written
+blocofy theme push <dir> --draft --work <wk_…>                    # write into the work
+blocofy theme dev <dir> --port 3030                               # local view of the draft, saves sync to it
+blocofy theme work request-approval <wk_…> --open --wait          # a person approves; exit 0 = published
 ```
 
-Going live is not a direct CLI step for an agent. Changes to a site's existing theme
-go into a theme work and a person approves them after a preview
-(`blocofy theme push <dir> --draft --work <wk_…>`, then
-`blocofy theme work request-approval <wk_…> --open --wait`); see the decision
-table in `SKILL.md`. `blocofy theme publish` belongs to a person or an
-owner-named CI key.
+A work is a private copy of the current live theme, so a brand-new theme and
+a one-line fix use the same five lines. The work belongs to the login or key
+that started it: start it and push to it with the same credentials (pushing
+needs both the theme-file and the API access of that site). Going live is the
+person's approval, never a CLI step by the agent; see the decision table in
+`SKILL.md`.
 
-- `theme dev` local server renders **live-instance pages** with your local
-  files. Its signed Preview URL is **retired server-side** ("CLI remote
-  preview … retired", verified 2026-10-31). To see the **draft instance** (its own
-  pages) use the editor or a per-page preview link
-  (`POST /themes/{id}/preview-links`, see platform SKILL §3).
+`blocofy theme push <dir> --draft --name "…"` without a work creates a "CLI
+draft" that only a person can publish from the panel. It has no approval
+link, so the kit does not use it.
+
+- `theme dev` (CLI 0.18+) renders a **draft** theme locally: your local files
+  plus that draft's saved pages, entries and settings, on `127.0.0.1` only.
+  It never renders the live theme. Its old remote Preview URL is retired; to
+  show a draft page to someone else, create a preview link (platform SKILL
+  §3). Older CLI versions behave differently: check `blocofy --version`.
 - For the person who does run it: `theme publish` has **no `--yes` flag**
   (only `push --live` / `push --instance <live handle>` take it). An agent
   runs neither — it requests approval on the theme work.

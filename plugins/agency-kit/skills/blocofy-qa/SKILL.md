@@ -1,6 +1,6 @@
 ---
 name: blocofy-qa
-description: Verification and publish gate for Blocofy sites - Playwright recipes against per-page draft preview links (expiry, settings pinning, Lenis-vs-scrollTo traps, wheel simulation, reduced-motion emulation), console/error sweeps, and the site_readiness pre-publish checklist. Use before publishing and whenever verifying a change end-to-end. TR triggers - dogrula, kontrol et, yayina hazir mi, test et, onizleme.
+description: Use when a change to a Blocofy site has to be verified in a rendered page, before asking for publish approval, when a draft preview shows old or unexpected content, or when a Playwright check on a draft is flaky (smooth scroll, entrance animations, reduced motion). TR triggers - doğrula, kontrol et, yayına hazır mı, test et, önizleme (ASCII - dogrula, yayina hazir mi, onizleme).
 ---
 
 # Blocofy QA
@@ -19,23 +19,35 @@ page, a console count and a screenshot.
 
 ## Preview access (the #1 source of false alarms)
 
-- The `theme dev` signed Preview URL is **retired on the server**
-  (2026-10-31). Use per-page links:
-  `POST /api/v1/themes/<theme handle>/preview-links {"page": "<page handle>"}` (MCP
-  `create_preview_link`). One link per route under test, ~24h, the `url` is
+Two ways to see a draft; pick by route type.
+
+- **Local view (`blocofy theme dev`, `http://127.0.0.1:<port>`)**: renders
+  your local theme files with the draft's saved content, and you can move
+  between pages, collection detail (dynamic template) pages included. It
+  never shows the live site. Forms are not submitted from it, and scripts'
+  fetch/XHR calls to the live site or third parties are blocked there. It
+  prints no shareable remote link. **Dynamic template routes are verified
+  here**: no preview link exists for them.
+- **Per-page preview links** for static pages and for showing a page to
+  someone else:
+  for a theme work `POST /api/v1/theme-work/<wk handle>/preview-links`, for a
+  draft theme outside a work
+  `POST /api/v1/themes/<theme handle>/preview-links {"page": "<page handle>"}`
+  (MCP `create_preview_link`). One link per route under test, ~24h, the `url` is
   returned once — save it under `.blocofy-build/session/`.
 - A link shows the draft **only on its own page**; clicking through to another
   route shows live content. Sweep routes by opening each route's own link, not
   by navigating within one.
-- **Expired or revoked link silently renders live content** — before debugging
-  any "my changes vanished" report, check the link's age / `list_preview_links`.
-- The link **pins the draft's theme files and theme settings at creation**.
-  After any `theme push` or theme-settings change (logo, colors, contact),
-  generate fresh links before re-verifying, or you'll see the old state and
-  misdiagnose. Collection lists on a link show published entries only.
+- **Expired or revoked link silently renders live content**, so a sweep can
+  come back green on the wrong page. Pass `--expect "<text>"` to
+  `verify-page.mjs` with a string that exists only in the draft; a page
+  whose HTML lacks it fails. Before debugging any "my changes vanished"
+  report, check the link's age / `list_preview_links`.
+- A link shows the theme **as saved when a link was last created**, not your
+  latest push. After any `theme push` or theme-settings change (logo, colors,
+  contact), create a new link before re-verifying, or you'll see the old
+  state and misdiagnose. Collection lists on a link show published entries only.
 - Revoke sweep links when done (`DELETE /api/v1/preview-links/{id}`).
-- Draft-instance pages are only visible through preview links / the editor —
-  the local dev server renders live-instance pages with local theme files.
 
 ## Motion-aware testing rules
 
@@ -51,14 +63,31 @@ page, a console count and a screenshot.
   `page.emulateMedia({reducedMotion:'reduce'})` → all `[data-reveal]` visible,
   counters final, zero console errors.
 
+## Expectations from the design DNA
+
+Read `.blocofy-build/design-dna.json` before the sweeps; it says what
+"correct" is for this site.
+
+- `motion.reduced_motion` is the fallback the reduced-motion pass asserts.
+- `visual_language.vocabulary[].quota`: count each mark per page against its
+  quota, and check its `never`.
+- `motion.smooth_scroll: false` → no Lenis on the page;
+  `motion.intensity: low` → entrance reveals only, no scrub or pin.
+
 ## Standard sweeps
 
-- **Page sweep**: for each route — HTTP 200, `console.error` count 0,
-  "unknown section" marker count 0, one screenshot.
-- **Interaction sweep**: accordions, pinned tabs, forms (fill + submit to a
-  test form key or assert fetch wiring), video play/pause on enter/leave.
+- **Page sweep**: for each route, HTTP 200, 0 console errors, 0 uncaught
+  exceptions, 0 failed page-resource requests, "unknown section" marker
+  count 0, the `--expect` text present, one full-page screenshot.
+- **Interaction sweep**: accordions, pinned tabs, forms (fill, then intercept
+  the request and assert its fields: `references/playwright-traps.md`; a real
+  submission stores a record and sends an e-mail, so it needs the human's
+  yes), video play/pause on enter/leave.
 - **Responsive sweep**: 390 / 768 / 1440 screenshots; no horizontal page scroll.
-- `scripts/verify-page.mjs` runs the page sweep for a list of per-page preview links.
+- `scripts/verify-page.mjs [--expect "<text>"] <url>…` runs the page sweep
+  for a list of per-page preview links or `theme dev` local URLs. A URL that
+  times out or errors is reported as failed and the sweep goes on; the exit
+  code is non-zero when any URL failed.
 - `scripts/reference-recon.mjs` records a reference site's structure, type,
   colour and tech signals with screenshots (orchestrator Phase 1,
   `reference-recon.md`). It is a study aid, not a QA gate.
@@ -70,7 +99,9 @@ page, a console count and a screenshot.
   finding against its `keepWhen`/`dropWhen` rubric before acting — row
   dividers flagged as fake underlines are a known false positive. A missing
   `integrity` on a CDN tag is always a real finding. Findings that would
-  replace GSAP/Lenis motion are dropped (theme-kit precedence rule).
+  replace GSAP/Lenis motion are dropped (theme-kit precedence rule). The
+  scanner is pinned to an exact version and runs without the `BLOCOFY_*`
+  variables in its environment.
 
 ## Publish gate (Phase 7 prerequisite)
 

@@ -3,31 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ page.seo_title | default: page.title }}{% if globals.site_name %} · {{ globals.site_name }}{% endif %}</title>
-  {% if page.seo_description %}<meta name="description" content="{{ page.seo_description }}">{% endif %}
-  {% if page.canonical %}<link rel="canonical" href="{{ page.canonical }}">{% endif %}
+  <title>{{ page.seo_title | default: page.title | escape }}{% if globals.site_name %} · {{ globals.site_name | escape }}{% endif %}</title>
+  {% if page.seo_description %}<meta name="description" content="{{ page.seo_description | escape }}">{% endif %}
+  {% if page.canonical %}<link rel="canonical" href="{{ page.canonical | safe_url }}">{% endif %}
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ page.seo_title | default: page.title }}">
-  {% if page.seo_description %}<meta property="og:description" content="{{ page.seo_description }}">{% endif %}
+  <meta property="og:title" content="{{ page.seo_title | default: page.title | escape }}">
+  {% if page.seo_description %}<meta property="og:description" content="{{ page.seo_description | escape }}">{% endif %}
   {%- assign og_image = page.og_image | default: globals.og_image -%}
   {% if og_image and og_image != blank %}
   <meta property="og:image" content="{{ og_image | image_url: 'width=1200&height=630&fit=cover&format=jpg' }}">
   <meta name="twitter:card" content="summary_large_image">
   {% endif %}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- FONTS: replace with the pairing chosen in the concept phase -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=REPLACE_DISPLAY&family=REPLACE_BODY&display=swap">
-  <!-- CDN: exact version + integrity + crossorigin on every tag (motion-adapter.md § CDN integrity) -->
+  <!-- FONTS PLACEHOLDER (css-tokens.md § Fonts): self-hosted woff2 only, no third-party font host.
+       Preload only the one or two faces used above the fold; the @font-face rules are in asset/theme.css.
+       Replace the URL with the CDN URL the media upload returned, or delete the tag. -->
+  <link rel="preload" as="font" type="font/woff2" href="REPLACE_DISPLAY_WOFF2_URL" crossorigin>
+  {% comment %} SMOOTH SCROLL: only when design-dna motion.smooth_scroll is true, move this tag out of the comment.
+  CDN rule: exact version + integrity + crossorigin on every tag (motion-adapter.md § CDN integrity).
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.css" integrity="sha384-gvLq/iOMNnPchdosgVym5huSVkKipHCQaqSw2Eg0V52Mzmlf169ZOsXcNc2cNu8x" crossorigin="anonymous">
+  {% endcomment %}
   <style>
 :root{ {{ theme_css }} }
 {% render 'asset/theme.css' %}
   </style>
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+  /* Hidden start states apply only under .xy-motion. No JS or reduced motion: the class is never
+     added. If app.js has not signalled within 2.5 s (a CDN script hangs), the class is removed and
+     everything shows (motion-adapter.md § Hidden-state failsafe). */
+  (function (root) {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.classList.add('xy-motion');
+    setTimeout(function () {
+      if (root.getAttribute('data-motion') !== 'on') root.classList.remove('xy-motion');
+    }, 2500);
+  })(document.documentElement);
+  </script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">{{ settings.skip_link_label | default: 'Skip to content' | escape }}</a>
   {{ header_html }}
   <main id="main">
 {{ content_html }}
@@ -35,15 +48,18 @@
   {{ footer_html }}
   <script>
   (function () {
-    /* chrome dedupe guard — keep first, remove later copies (see chrome-pattern.md) */
-    ['.xy-topbar', '.xy-footer'].forEach(function (sel) {
+    /* chrome dedupe guard: keep first, remove later copies. The selectors are the root classes of
+       the header and footer markup (chrome-pattern.md). */
+    ['.xy-header', '.xy-footer'].forEach(function (sel) {
       document.querySelectorAll(sel).forEach(function (el, i) { if (i > 0) el.remove(); });
     });
   })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+  {% comment %} SMOOTH SCROLL: only when design-dna motion.smooth_scroll is true, move this tag out of the comment.
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js" integrity="sha384-ClD7pCgIUz5M81HT8aZmMxCsWmfsycmBiwL5gy1pUbdWHvICIbea22N9sTtAFotA" crossorigin="anonymous"></script>
+  {% endcomment %}
   <script>
 {% render 'asset/app.js' %}
   </script>

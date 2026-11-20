@@ -32,7 +32,7 @@ back and tell the human what is now live.
 | **Publish or unpublish a page in the live theme**; create a page without naming a draft theme | A page created without a draft target binds to the live theme (`pages-documents.md`) |
 | **Robots / indexing** on any published page or entry (index ↔ noindex) | Changes what search engines keep; slow to reverse |
 | **Forms**: recipients, fields, deletion | Site-wide; a wrong recipient sends visitors' data to the wrong person |
-| A **real form submission** as a test | Sends a notification e-mail and stores a record. Intercept the request instead (`blocofy-qa`); submit for real only on a yes, and say which record to delete afterwards |
+| A **real form submission** as a test | Sends a notification e-mail and stores a record. Intercept the request instead (`blocofy-qa` `references/playwright-traps.md`); submit for real only on a yes, and say which record to delete afterwards |
 | **Server Site DNA** when it is not empty | Overwrites the brand record the client or another session wrote. Show the difference first |
 | **Delete**: media, pages, entries, collections, forms, theme copies in the library | Media and theme copies cannot be restored. Before deleting media, check that no live theme setting or entry still points at it |
 
@@ -43,6 +43,7 @@ back and tell the human what is now live.
 - Publishing a page that belongs to a draft theme (visitors only see pages of
   the live theme). Confirm the page's theme first; `api.sh` asks for
   `LIVE_WRITE_OK=1` on every publish call because the path does not show it.
+- Revoking a preview link (it only ends a link you created).
 - Uploading to the media library (additive, not shown anywhere until wired).
 - Draft or unpublished entries; new collections with no page route.
 - Reads.

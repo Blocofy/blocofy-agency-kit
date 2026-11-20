@@ -50,7 +50,7 @@ if have blocofy; then ok "blocofy CLI $(blocofy --version 2>/dev/null | head -1)
 say "3/3  Per client site (not done by this script)"
 cat <<'TXT'
   In the site's own folder:
-    1. .env.local with BLOCOFY_URL, BLOCOFY_API_TOKEN, BLOCOFY_CLI_TOKEN, BLOCOFY_TOKEN
+    1. .env.local with the six BLOCOFY_* values listed in the README
        (keys: Blocofy panel, Ayarlar -> Bağlantılar ve anahtarlar); keep it out of git
     2. .mcp.json pointing at https://app.blocofy.com/api/v1/mcp with
        "Authorization": "Bearer ${BLOCOFY_API_TOKEN}"

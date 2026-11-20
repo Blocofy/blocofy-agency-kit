@@ -26,11 +26,11 @@ platform seçimine girdi olur; Faz 8'de kurulumun kontrol listesidir.
 ## 2. Adapter README bölümleri
 
 1. Prototip → platform eşleme tablosu (sayfa, partial, koleksiyon, UI sözlüğü, form, asset)
-2. Sync/deploy hattı (komutlar, onay bayrakları)
-3. İçerik ve medya aktarım scriptleri (idempotent, manifestli)
+2. Taslak hattı (komutlar) ve canlıya çıkışın hangi insan onayına bağlandığı
+3. İçerik ve medya aktarım scriptleri (idempotent, tek medya kaydı)
 4. Eşdeğerlik araçlarının platforma uyarlanması (render edilmiş sayfa nasıl alınır)
 5. Kalıcı kurallar (tasarım gereği davranışlar)
-6. `known-issues.md` bağlantısı (geçici hatalar)
+6. `known-issues.md` bağlantısı (tarihli hata geçmişi; her sitede yeniden test)
 
 ## 3. known-issues.md sütunları
 

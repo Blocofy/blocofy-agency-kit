@@ -35,10 +35,11 @@ the client needs closeups.
 ## Truthfulness limits
 
 - No invented awards, metrics, client names or certifications in imagery.
-- Case-study visuals may be *stylized representations* of real work; label
-  copy stays factual.
+- Nothing generated stands in for the client's real work, products, team or
+  premises (`SKILL.md` ground rule 5). An illustrative image next to a case
+  study is labelled as illustration; copy stays factual.
 - People: read `visual_language.families[id].people`. Default is generic
-  figures/silhouettes. Realistic generated people only where the client
+  figures or silhouettes, no identifiable people. Realistic generated people only where the client
   approved it for that family, and never as a stand-in for the client's real
   team, premises or customers.
 
@@ -46,5 +47,5 @@ the client needs closeups.
 
 - State: subject, motion quality ("gentle continuous motion"), camera
   ("camera static"), loop intent ("seamless calm loop"), palette, "no text".
-- Moderation false positives: rephrase abstractly once (droplets → translucent
-  circles) before assuming the concept is blocked.
+- A harmless prompt is blocked: describe the same scene once in plainer
+  words; if it is blocked again, stop and tell the human (`SKILL.md`).

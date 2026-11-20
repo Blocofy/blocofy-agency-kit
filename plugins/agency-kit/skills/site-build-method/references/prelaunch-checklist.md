@@ -5,7 +5,7 @@ Projeye kopyalanır ve işaretlenir. Her maddenin yanına kanıt dosyası ya da 
 
 ## SEO taşıma
 - [ ] `url-map.csv` tam: eski sitemap + tarama + (varsa) Search Console tıklama/backlink sayfaları
-- [ ] Her satır tek atlamayla 200'e varıyor ya da bilinçli 410 (script çıktısı)
+- [ ] Her satır tek atlamayla 200'e varıyor ya da bilinçli 410 (kanıt: `quality-gates.md`)
 - [ ] Canonical kendine; hreflang çift yönlü ve `x-default` var
 - [ ] Sitemap yeni URL şemasında; robots doğru
 - [ ] Yapılandırılmış veri (Organization, Breadcrumb, kayıt tipine uygun şema) geçerli
@@ -16,7 +16,7 @@ Projeye kopyalanır ve işaretlenir. Her maddenin yanına kanıt dosyası ya da 
 - [ ] Aydınlatma metni, çerez politikası, kullanım koşulları müşteri (hukukçusu) onaylı
 - [ ] Formlardaki onay kutusu metne bağlantılı, zorunluluk durumu doğru
 - [ ] Veri saklama süresi ve form bildirimlerinin kime gittiği kayıtlı
-- [ ] Görsel, font ve video lisansları `media-manifest.json`'da tam
+- [ ] Görsel, font ve video lisansları `.blocofy-build/media-registry.json`'da tam
 
 ## İzin ve analitik
 - [ ] Çerez/izin bandı çalışıyor ve markaya uygun
@@ -25,7 +25,7 @@ Projeye kopyalanır ve işaretlenir. Her maddenin yanına kanıt dosyası ya da 
 - [ ] Test trafiği analitikten ayrılıyor
 
 ## Formlar
-- [ ] Her formdan tek gerçek test gönderildi (müşteri izniyle) ve bildirim ulaştı
+- [ ] Her formdan tek gerçek test gönderildi (müşteri izniyle; Blocofy'da durakla) ve bildirim ulaştı
 - [ ] Bildirim alıcıları müşteriye ait adresler; geçici test alıcıları geri alındı
 - [ ] Spam koruması (honeypot / rate limit) çalışıyor
 - [ ] Başarı ve hata durumları her dilde doğru
@@ -46,8 +46,8 @@ Projeye kopyalanır ve işaretlenir. Her maddenin yanına kanıt dosyası ya da 
 ## Güvenlik
 - [ ] Depoda ve `.mcp.json`'da literal token yok (grep)
 - [ ] Anahtarlar en az yetkiyle; devir-teslimde döndürülecekler listelendi
-- [ ] Canlıya yazan scriptler onay bayrağı olmadan çalışmıyor
-- [ ] CDN'den yüklenen her script ve stil dosyası tam sürüme sabitli, `integrity` ve `crossorigin` taşıyor (grep; Google Fonts CSS hariç)
+- [ ] Proje scriptleri yalnız taslağa yazıyor; Blocofy'da `--live`, `theme publish`, `allow_live` hiçbir scriptte yok (grep)
+- [ ] CDN'den yüklenen her script ve stil dosyası tam sürüme sabitli, `integrity` ve `crossorigin` taşıyor (grep). Fontlar sitenin kendi alanından yüklenir; üçüncü taraf font isteği yok
 
 ## Geri dönüş
 - [ ] Önceki canlı durumun yedeği: instance/sürüm id, tema dosyaları, sayfa belgeleri, eski site

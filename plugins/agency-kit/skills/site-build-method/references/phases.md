@@ -3,6 +3,8 @@
 Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı) · **Yapılacaklar** ·
 **Çıktı** (sözleşme dosyaları) · **Kapı** (kanıt + eşik) · **Onay** · **STATE satırı**.
 Şablonlar `contracts.md`'de. Dosya yolları öneridir; proje başka düzen seçerse `STATE.md`'de yazar.
+"Faz N" bu yöntemin fazıdır, `STATE.md` proje kökündeki dosyadır. Orchestrator fazları
+"orchestrator Phase N" diye yazılır; eşleme tablosu `../SKILL.md`'de.
 
 ---
 
@@ -16,12 +18,12 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 - `STATE.md`, `decisions.md`, `open-questions.md` şablondan açılır.
 - Intake soruları: karar vericiler ve onay kanalı; marka varlıkları (logo, kılavuz, font lisansları); içerik kaynakları (katalog, Excel/ERP, mevcut site, hiçbiri); mevcut alan adı ve barındırma; hukuki gereksinim (KVKK, GDPR, sektör); analitik/pazarlama araçları; bütçe (efor, AI medya); hedef tarih.
 - Hedef platform biliniyorsa doctor çalışır (Blocofy: `blocofy-platform` `scripts/doctor.sh`). API istemcisinin WAF/CDN tarafından engellenmediği doğrulanır.
-- Çok dilli sitede **ikinci dil platformda şimdi açılır ve aktif olduğu doğrulanır**. Açılamazsa platforma bildirilir; tema ve içerik modeli dil-bağımsız ilerler.
+- Çok dilli sitede **platformun ikinci bir dili etkinleştirebildiği şimdi doğrulanır** (plan, belge ve salt okuma ile). Hangi diller olacağı burada değil Faz 2'de kararlaştırılır; kararlaştırılan diller Faz 8'in başında etkinleştirilip doğrulanır. Doğrulamak için deneme etkinleştirmesi gerekiyorsa bu bir site ayarı yazımıdır: Blocofy'da `blocofy-platform` `references/live-writes.md` durağıyla, açık onayla yapılır. Etkinleştirilemiyorsa engel `open-questions.md`'ye yazılır; tema ve içerik modeli dil-bağımsız ilerler.
 
 **Çıktı:** `STATE.md` (mod henüz `undecided`), `decisions.md`, `open-questions.md`.
-**Kapı:** Tüm erişimler doğrulandı (komut çıktısı); gizli bilgi kuralları uygulandı (`grep` ile literal token yok).
+**Kapı:** Tüm erişimler doğrulandı (komut çıktısı); gizli bilgi kuralları uygulandı (`grep` ile literal token yok); çok dilli sitede ikinci dilin etkinleştirilebildiğinin kanıtı yazılı.
 **Onay:** Ajans.
-**STATE:** `| 0 | Intake | done | STATE.md | 2026-..: doctor OK, en-US aktif (GET /site), token grep temiz |`
+**STATE:** `| 0 | Intake | done | STATE.md | 2026-..: doctor OK, ikinci dil etkinleştirilebilir (kanıt), token grep temiz |`
 
 ---
 
@@ -50,10 +52,10 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Giriş:** Faz 1 çıktıları diskte.
 
-**Yapılacaklar** (`superpowers:brainstorming`, soru soru)
+**Yapılacaklar** (soru soru; `superpowers:brainstorming` kuruluysa onunla, kit dışı ve isteğe bağlı)
 - **Mod:** `prototype-first | theme-direct | takeover | migration` (ölçütler SKILL.md).
 - **Platform:** `adapters/ADAPTER-TEMPLATE.md` sorularıyla adaylar karşılaştırılır.
-- **Diller ve URL şeması:** varsayılan dilin öneki, slug çeviri kuralı, eksik çeviri politikası (gizle / varsayılana düş).
+- **Diller ve URL şeması:** sitenin dilleri burada kararlaştırılır (Faz 0 yalnız platformun yapabildiğini doğrular); varsayılan dilin öneki, slug çeviri kuralı, eksik çeviri politikası (gizle / varsayılana düş).
 - **İş modeli:** lead-gen, e-ticaret, kurumsal vitrin, içerik. Dönüşüm olayları.
 - **Yargı alanı:** KVKK / GDPR / ikisi; yasal metinlerin kaynağı (müşterinin hukukçusu).
 - **Analitik ve izin:** araç, izin yönetimi, form olay ölçümü.
@@ -72,7 +74,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - **Spec:** karar özeti, tasarım sistemi (token değerleri, tipografi, şekil, bileşen kütüphanesi), kavram ve imza öğesi, sayfa senaryoları, site haritası, rol/ekip.
-- **Plan** (`superpowers:writing-plans`): Global Constraints (token değerleri, fontlar, motion bütçesi, URL kuralı, a11y, veri kuralı), dosya yapısı, `data-schema.md`, `dom-contract.md`, 8–12 görev; her görevin test ve kabul ölçütü.
+- **Plan** (`superpowers:writing-plans` kuruluysa onunla; kit dışı, yoksa elle): Global Constraints (token değerleri, fontlar, motion bütçesi, URL kuralı, a11y, veri kuralı), dosya yapısı, `data-schema.md`, `dom-contract.md`, 8–12 görev; her görevin test ve kabul ölçütü.
 - **Roller** `roles.md` şablonlarından üretilir; girdi yolları gerçek dosyalarla doğrulanır.
 - **Bütçeler** spec'e yazılır: LCP, INP, CLS, toplam JS KB, hero medya KB; AI medya üst sınırı.
 
@@ -88,7 +90,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - Sıra: veri → build/check → tokenlar → layout/header/footer → sayfa şablonları → etkileşim JS → motion → QA.
-- `superpowers:subagent-driven-development`: görev başına taze alt ajan, görev sonu spec + kalite incelemesi, ledger dosyası.
+- Görev başına taze alt ajan, görev sonu spec + kalite incelemesi, ledger dosyası (`superpowers:subagent-driven-development` kuruluysa onunla; kit dışı, yoksa aynı düzen elle).
 - Gerçek içerikle çalış. Yer tutucu yalnız verisi olmayan alanda, görünür biçimde işaretli ve `content-inventory.csv`'de kayıtlı.
 - Mimari: `prototype-architecture.md`.
 
@@ -105,9 +107,9 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - **Son inceleme:** işe dahil olmayan bir ajan spec ve planla karşılaştırır; bulgular önem sırasıyla, dosya:satır kanıtıyla. Bulgular tek düzeltme dalgasında kapanır, kapsamlı yeniden inceleme yapılır.
-- **UX eleştirisi:** yine bağımsız ajan + `design:design-critique`; persona görevleri üzerinden.
+- **UX eleştirisi:** yine bağımsız ajan, persona görevleri üzerinden (`design:design-critique` kuruluysa ek girdi; kit dışı, isteğe bağlı).
 - **v2 planı** üç pakete ayrılır: A düzeltme, B yapısal, C kreatif. Müşteri paket paket onaylar.
-- Ölçüm: Lighthouse mobil (3 temsilci sayfa), kaydırma probu, etkileşim testleri.
+- Ölçüm: Lighthouse mobil (3 temsilci sayfa), kaydırma ve etkileşim testleri (proje scriptleri; kitte yok).
 
 **Çıktı:** `docs/qa/<tarih>-final-review.md`, `-ux-critique.md`, `-v2-plan.md`, `-v2-report.md`.
 **Kapı:** Kritik bulgu 0; prototip bütçeleri tutuyor (ölçüm tablosu dosyada).
@@ -119,15 +121,17 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Giriş:** Faz 3 kapısı kapandı (Faz 4 ile paralel yürüyebilir).
 
+`blocofy-media` görsel ailelerini `.blocofy-build/design-dna.json` dosyasından okur. Bu rotada o dosya Faz 8'i beklemez: üretimden önce `design-dna.md` ve `decisions.md`'den sözleşme v2 biçiminde yazılır (en az `visual_language` ve `decisions[]`).
+
 **Yapılacaklar**
 - `content-inventory.csv` doldurulur: alan, kaynak, sahibi, durum (taslak / müşteride / onaylı), hak/lisans, kanıt (iddialar için).
 - AI ile yazılan metin müşteri onayı olmadan canlıya çıkmaz.
 - **Medya:** önce müşterinin kendi varlıkları. Eksik *uygulama/atmosfer* görselleri referans güdümlü ve yazısız üretilir (`blocofy-media`). Gerçekliği temsil eden görsel üretilmez.
-- Üretimden önce kredi kontrolü; model listesi o gün doğrulanır; varyant sayısı üst sınırlı; her sonuç tam boyutta incelenir (yazı, logo, bozulma).
-- `media-manifest.json`: dosya, kaynak (müşteri / stok / AI), model, maliyet, deneme sayısı, lisans.
+- Her üretim turu `blocofy-media` harcama kapısından geçer; müşteri malzemesi bir üretim servisine yalnız açık onayla yüklenir. Model listesi o gün doğrulanır; varyant sayısı üst sınırlı; her sonuç tam boyutta incelenir (yazı, logo, bozulma).
+- Medya kaydı tek dosyadır: `.blocofy-build/media-registry.json` (alanlar `blocofy-media` `references/asset-system.md`). Yöntemin ek alanları (kaynak: müşteri / stok / AI, lisans) aynı dosyaya eklenir; maliyet ve deneme sayısı `.blocofy-build/credits.md`'ye yazılır.
 
-**Çıktı:** Onay sütunu dolu `content-inventory.csv`, `media-manifest.json`, `assets/`.
-**Kapı:** İşaretsiz yer tutucu 0; hak/lisans sütunu tam; medya harcaması bütçe içinde (manifest toplamı).
+**Çıktı:** Onay sütunu dolu `content-inventory.csv`, `.blocofy-build/media-registry.json`, `.blocofy-build/credits.md`, `assets/`.
+**Kapı:** İşaretsiz yer tutucu 0; hak/lisans sütunu tam; medya harcaması bütçe içinde (`credits.md` toplamı).
 **Onay:** Müşteri: metinler.
 
 ---
@@ -138,7 +142,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - Müşteriye prototip bağlantısı + kontrol listesi; onay `client-signoff.md` şablonuyla yazılı alınır.
-- Git etiketi `proto-signoff`. `STATE.md` `sourceOfTruth: prototype (frozen)`.
+- Git etiketi `proto-signoff`. Proje `STATE.md`'sinde `sourceOfTruth: prototype (frozen)`.
 - Değişiklik kontrolü başlar (`change-control.md`).
 
 **Çıktı:** `client-signoff.md`, etiket.
@@ -152,17 +156,18 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 **Giriş:** Faz 7 kapısı kapandı (`theme-direct` modunda Faz 3 + 6).
 
 **Yapılacaklar**
-- **İlk adım:** `adapters/<platform>/known-issues.md`'deki her maddeyi tarifle yeniden test et, sonucu tabloya yaz. Ancak sonra geçici çözüm uygula.
-- **Taslak/canlı izolasyonunu** küçük bir deneme sayfasıyla test et. Bozuksa canlıda kurulum yalnız test alan adında, noindex kilidiyle ve `decisions.md` kaydıyla.
-- **Capture:** `capture-map.md` doldurulur ve platform sözleşmeleri üretilir. Blocofy için: tokenlar + `design-dna.md` → `design-dna.json`; `ia-sitemap.md` → `brief.md`; `data/*.json` → `content-model.json`.
-- Eski tenant verisi varsa yedeklenir (`legacy-backup/`), kullanıcı onayıyla temizlenir.
-- Koleksiyonlar ve formlar sözleşmeden kurulur; kayıt ve medya aktarımı idempotent scriptlerle, id manifestleri commit'lenir.
+- **İlk adım:** `adapters/<platform>/known-issues.md`'deki her maddeyi tarifle yeniden test et, sonucu tabloya yaz. Geçici çözümü yalnız test hâlâ başarısızsa uygula.
+- **Diller:** Faz 2'de kararlaştırılan diller etkinleştirilir ve aktif oldukları salt okumayla doğrulanır. Dil etkinleştirme site ayarı yazımıdır; Blocofy'da durak ister (`blocofy-platform` `references/live-writes.md`).
+- **Taslak izolasyonunu** küçük bir deneme sayfasıyla test et: sayfa taslak temaya bağlanıyor ve canlıda görünmüyor mu. Bozuksa dur, bulguyu insana bildir ve `decisions.md`'ye yaz; ajan kurulumu canlıya taşımaz.
+- **Capture:** `capture-map.md` doldurulur. Blocofy'da sözleşme dosyalarını orchestrator Phase 1–3 bu haritadan yazar: tokenlar + `design-dna.md` + `decisions.md` → `design-dna.json` (sözleşme v2); `ia-sitemap.md` → `brief.md`; `data/*.json` → `content-model.json`.
+- Eski tenant verisi varsa yedeklenir (`legacy-backup/`). Silme ancak durakla alınan açık onaydan sonra yapılır.
+- Koleksiyon şemaları ve formlar sözleşmeden kurulur. Yeni koleksiyon serbesttir; var olan şema, form, menü ve site ayarı değişikliği durak ister.
 - URL şeması platformda değiştiyse `url-map.csv` yeni sütunu burada yeniden üretilir.
-- Blocofy'da bu fazı `blocofy-orchestrator` yürütür; bu skill sözleşmeleri teslim eder ve kapıyı denetler.
+- Blocofy'da bu fazı `blocofy-orchestrator` yürütür (Phase 0–3) ve durumunu `.blocofy-build/STATE.md`'ye yazar; bu skill `capture-map.md`'yi teslim eder, kapıyı denetler ve proje `STATE.md`'sine yalnız işaretçi ile kendi kapı kanıtını yazar.
 
-**Çıktı:** `capture-map.md`, platform sözleşmeleri, manifestler, known-issues test sonuçları.
-**Kapı:** Diller aktif (API çıktısı); taslak/canlı stratejisi kayıtlı; content-model'deki her section'ın veri kaynağı çözüldü.
-**Onay:** Ajans (canlıya dokunan her şey için ayrıca insan onayı).
+**Çıktı:** `capture-map.md`, platform sözleşmeleri, known-issues test sonuçları.
+**Kapı:** Kararlaştırılan diller aktif (API çıktısı); taslak izolasyonu doğrulandı; content-model'deki her section'ın veri kaynağı çözüldü.
+**Onay:** Ajans (önizlemesi olmayan her yazım için ayrıca insan onayı).
 
 ---
 
@@ -172,15 +177,17 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Yapılacaklar**
 - Greenfield tema: platform varsayılan teması tasarım tabanı yapılmaz. Önekli section adları.
+- Blocofy'da bu faz orchestrator Phase 4–6'dır. Tema yalnız taslağa ya da tema çalışmasına yazılır; ajan canlı temaya yazmaz.
 - Sıra: layout ve chrome → tokenlar ve ortak parçalar → sayfa sayfa section'lar → dinamik şablonlar.
-- CSS/JS prototipin `src/` dizininden üretilir, temada elle düzenlenmez. UI sözlüğü tema ayarlarına script ile dönüşür.
-- Her sayfa canlıya (ya da taslağa) alındığında eşdeğerlik: metin farkı, blok geometrisi, yan yana ekran görüntüsü, etkileşim ve form testleri, tüm rotaların taraması (konsol, yinelenen id, kırık bağlantı/görsel).
+- Kayıt ve medya aktarımı idempotent olur, id eşlemeleri commit'lenir. Taslak kayıt serbesttir; yayınlanmış kayıt yazımı durak ister. Medya `.blocofy-build/media-registry.json`'a kaydedilir.
+- CSS/JS prototipin `src/` dizininden üretilir, temada elle düzenlenmez. UI sözlüğü tema ayarlarına proje scriptiyle dönüşür.
+- Her sayfa taslağa alındığında önizleme bağlantısı üzerinden eşdeğerlik: metin farkı, blok geometrisi, yan yana ekran görüntüsü, etkileşim ve form testleri, tüm rotaların taraması (konsol, yinelenen id, kırık bağlantı/görsel).
 - Farklar ya düzeltilir ya `parity-report.md`'de "bilinçli fark" olarak gerekçelendirilir. Eşdeğerlik aracı prototipte hata bulursa prototip de düzeltilir.
 - Uzun iş sayfa/section başına alt ajanlara bölünür.
 - Platform hataları bulunduğu anda istek → yanıt → beklenen → geçici çözüm → etki formatında kaydedilir.
 
 **Çıktı:** Tema dizini, `parity-report.md`, platform bulgu raporu.
-**Kapı:** Her dilde metin birebir (bilinçli farklar kayıtlı); geometri toleransı içinde; tarama 0; content-model ↔ tema section tipleri iki yönlü eşleşiyor (script çıktısı).
+**Kapı:** Her dilde metin birebir (bilinçli farklar kayıtlı); geometri toleransı içinde; tarama 0; content-model ↔ tema section tipleri iki yönlü eşleşiyor. Her kapının kanıtı ve kitte script olmadığında yedek kanıt `quality-gates.md`'de.
 **Onay:** Yok.
 
 ---
@@ -189,7 +196,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Giriş:** Faz 9 kapısı kapandı.
 
-**Yapılacaklar:** `prelaunch-checklist.md` baştan sona. Özellikle: 301 doğrulaması, hukuk metinleri, izin + analitik, gerçek form testi (müşteri izniyle, her formdan bir), platform performans ölçümü, klavye ve ekran okuyucu testi, geri dönüş planı, form alıcılarının müşteri adresine alınması.
+**Yapılacaklar:** `prelaunch-checklist.md` baştan sona. Özellikle: 301 doğrulaması, hukuk metinleri, izin + analitik, gerçek form testi (müşteri izniyle, her formdan bir; Blocofy'da gerçek gönderim durak ister), platform performans ölçümü, klavye ve ekran okuyucu testi, geri dönüş planı, form alıcılarının müşteri adresine alınması.
 
 **Çıktı:** İşaretli `prelaunch-checklist.md`; tutmayan metrikler için `decisions.md`'de kabul edilmiş risk.
 **Kapı:** Listede işaretsiz madde yok; her madde kanıt dosyasına bağlı.
@@ -201,7 +208,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 
 **Giriş:** Açık, tarihli yayın onayı.
 
-**Yapılacaklar:** Önceki canlı durumun yedeği (instance id, tema dosyaları, sayfa belgeleri), alan adı bağlama, noindex kaldırma, 301'lerin etkinleştirilmesi, sitemap gönderimi, smoke testi, 7 gün 404/konsol izleme.
+**Yapılacaklar:** Önceki canlı durumun yedeği (instance id, tema dosyaları, sayfa belgeleri), alan adı bağlama, noindex kaldırma, 301'lerin etkinleştirilmesi, sitemap gönderimi, smoke testi, 7 gün 404/konsol izleme. Blocofy'da tema canlıya onay akışıyla çıkar (orchestrator Phase 7): ajan onay ister, bir kişi panelde onaylar. Önizlemesi olmayan adımları (noindex, yönlendirme, site ayarı) ya o kişi yapar ya da ajan durakla onay alıp yapar.
 
 **Çıktı:** Yayın notu (ne, ne zaman, kim onayladı, geri dönüş komutu).
 **Kapı:** Smoke yeşil; `robots` ve meta noindex kaldırıldı (çıktı); 7. gün raporu dosyada.
@@ -219,7 +226,7 @@ Her kart aynı çerçeveyi izler: **Giriş** (başlamak için ne doğru olmalı)
 - Ajans anahtarları döndürülür; test alıcıları ve geçici erişimler kaldırılır.
 - **Prototip kararı** (`change-control.md`): varsayılan arşiv.
 - 30. gün: 404 raporu, dizin kapsama, saha performans verisi.
-- Retro: işe yarayanlar/yaramayanlar; kalıcı dersler bu skill'e ya da adapter'a PR, platform hataları known-issues'a.
+- Retro: işe yarayanlar/yaramayanlar; kalıcı dersler bu skill'e ya da adapter'a PR, platform hataları yeniden test tarifiyle known-issues'a.
 
 **Çıktı:** `handover.md`, eğitim kaydı bağlantısı, retro notu, arşiv etiketi.
 **Kapı:** Anahtar döndürme kanıtı; eğitim yapıldı; 30. gün raporu dosyada; dersler PR olarak açıldı.

@@ -11,8 +11,8 @@ tarihi anlatmaz; sayılar ve proje ayrıntıları bilerek yoktur.
 - Metin ve geometri eşdeğerlik araçları: hem taşıma hatalarını hem prototipteki hataları bulur.
 - CSS/JS'nin tek kaynaktan tema asset'ine üretilmesi: bu katmanda kayma olmaz.
 - Arayüz sözlüğünün script ile tema ayarlarına dönüşmesi: metinler panelden düzenlenebilir olur.
-- Platform hatalarının tekrar üretilebilir raporu ve "platform yanıt verince hepsini yeniden
-  test et" notu.
+- Platform hatalarının tekrar üretilebilir kaydı ve "her yeni sitede hepsini yeniden test et"
+  notu.
 
 ## Hatadan kurala
 
@@ -26,9 +26,9 @@ tarihi anlatmaz; sayılar ve proje ayrıntıları bilerek yoktur.
 | Yönlendirme haritası eksikti ve eski adres şemasına göreydi | Faz 1 `url-map.csv` + Faz 10 yönlendirme doğrulaması |
 | Hukuk metinleri ve ölçüm kararı sona kaldı | Faz 2 yargı alanı kararı + yayın öncesi hukuk/izin bölümü |
 | Form bildirimleri geçici olarak kişisel bir adrese yönlendirildi | Ajansa ait test kutusu, karar kaydı, yayın öncesi geri alma |
-| Eşitleme scripti her çalışmada canlıya yazıyordu | Canlıya yazma onay bayrağı |
-| Yapay zekâ ile medya harcaması kayıt dışıydı | Medya bütçesi ve manifestte maliyet |
-| İkinci dilin açılışı takıldı ve fark edildiğinde iş ilerlemişti | Faz 0'da ikinci dili aç ve doğrula |
+| Eşitleme scripti her çalışmada canlıya yazıyordu | Scriptler ve ajan yalnız taslağa yazar; canlıya çıkışı bir kişi onaylar |
+| Yapay zekâ ile medya harcaması kayıt dışıydı | Medya bütçesi, harcama kapısı ve `credits.md` |
+| İkinci dilin açılışı takıldı ve fark edildiğinde iş ilerlemişti | Faz 0'da platformun ikinci dili etkinleştirebildiğini doğrula; diller Faz 2'de kararlaştırılır, Faz 8 başında etkinleştirilip doğrulanır |
 | Kontrast iddiası kanıt dosyasına bağlı değildi | Kontrast matrisi dosyası kapıda |
 | Rol tanımları yazıldı ama alt ajanlar genel tiple başlatıldı; tanımlar spec değiştikçe güncellenmedi | Rolü ajan tipi olarak çağır; her faz başında güncellik kontrolü |
 | Kapsam, geç gelen resmi veriyle büyüdü | Faz 3 planında veri kaynağının onay tarihi; değişiklik kontrolü |

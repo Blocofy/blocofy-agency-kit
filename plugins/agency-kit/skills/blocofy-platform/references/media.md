@@ -12,7 +12,8 @@ curl -s -X POST "https://app.blocofy.com/api/v1/media" \
 - **Always pass `;type=<mime>`** in `-F`. curl defaults to
   `application/octet-stream` and the server rejects it
   ("this file type cannot be uploaded"), most often on video/mp4.
-- Allowed: images, video, audio, PDF, office docs. Max 50 MB.
+- Allowed: images, video, audio, PDF, office docs, and woff2 fonts
+  (`type=font/woff2`, per the platform docs). Max 50 MB.
 - **SVG upload is gated per site** (docs: staged rollout, `403
   svg_upload_disabled` until enabled). Site logo / favicon / `og_image` never
   accept SVG (`422 svg_not_supported_for_field`). Rasterize logos/marks to PNG

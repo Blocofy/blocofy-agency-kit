@@ -82,7 +82,8 @@ Gate check: no empty string in required fields; `signature_element` concrete;
 `on_accent` present (contrast is a DNA decision, not per-component
 improvisation); `visual_language.concept` set; at least one family; every
 family has `style_ref` or `pending board`; `decisions[0]` quotes the client's
-direction pick; no `decisions[].rule` is contradicted by another field.
+direction pick (on the prototype-first route of `site-build-method`, the pick
+recorded in its sign-off file is quoted here); no `decisions[].rule` is contradicted by another field.
 
 `dials` are 1–10 (`concept-process.md` step 1 defines each end). They and
 `design_read` are written by Phase 2 from the specialist brief; no external

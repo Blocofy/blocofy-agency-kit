@@ -2,7 +2,7 @@
 
 ## PageDocument v2 shape
 
-```json
+```text
 { "version": 2, "sections": [
   { "id": "unique-id", "type": "SectionType", "settings": { … },
     "blocks": [ { "type": "block-type", "settings": { … } } ],

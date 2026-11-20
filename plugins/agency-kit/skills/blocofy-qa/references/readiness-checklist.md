@@ -9,7 +9,10 @@ the user the approval link; never publish on your own.
 - [ ] `site_readiness` (MCP) report reviewed; every `fail` resolved,
       every `warn` consciously accepted
 - [ ] `site_status` health `ok` (no pages_split / empty live instance)
-- [ ] Page sweep: all routes 200, 0 console errors, 0 unknown sections
+- [ ] Page sweep: all routes 200, 0 console errors, 0 unknown sections,
+      `--expect` text found (proves the draft was rendered, not live)
+- [ ] Dynamic template routes (collection detail pages) checked in the
+      `blocofy theme dev` local view; no preview link exists for them
 - [ ] Responsive + reduced-motion sweeps green
 
 ## Content honesty
@@ -17,8 +20,8 @@ the user the approval link; never publish on your own.
 - [ ] Zero placeholder text/media anywhere (search for REPLACE_, lorem, TODO)
 - [ ] All metrics/claims verifiable or removed; no invented awards/quotes
 - [ ] Client names only where the engagement is confirmed
-- [ ] All media self-hosted on the tenant CDN (no generation-service or
-      third-party hotlinks)
+- [ ] All media and fonts self-hosted on the tenant CDN (no generation-service
+      or third-party hotlinks, no request to a third-party font host)
 
 ## Hygiene
 
